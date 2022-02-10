@@ -21,25 +21,27 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     on<UnfinishedArticleRead>(_unfinished);
     on<GetUnfinishedReadArticle>(_getUnfinishedReadArticles);
     on<RemoveUnfinishedReadArticle>(_removeUnfinishedReadArticle);
+    on<SavedArticle>(_savedArticle);
   }
 
-  _test(
-      ArticleGetEvent event,
-      Emitter<ArticlesState> emit
-  ) {
+  _test(ArticleGetEvent event, Emitter<ArticlesState> emit) {
     print('testing article bloc');
   }
 
   _getArticles(ArticleGetEvent event, Emitter<ArticlesState> emit) async {
     var response = await articleService.getVerifiedArticles();
     emit(state.copyWith(status: ArticleStatus.loading));
-    if(!response.error) {
+    if (!response.error) {
       List<Article> articles = response.collections!.map((article) {
         return Article.fromMap(article);
       }).toList();
-      emit(state.copyWith(articles: articles, sortedArticles: articles, status: ArticleStatus.success));
+      emit(state.copyWith(
+          articles: articles,
+          sortedArticles: articles,
+          status: ArticleStatus.success));
     } else {
-      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+      emit(state.copyWith(
+          status: ArticleStatus.failed, message: response.message));
     }
   }
 
@@ -47,14 +49,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     await articleService.viewArticle(event);
   }
 
-  _sortArticles(ArticleSortByCategories event, Emitter<ArticlesState> emit) async {
+  _sortArticles(
+      ArticleSortByCategories event, Emitter<ArticlesState> emit) async {
     List<Article> articles = [];
     event.tags.map((tag) {
       state.articles.map((article) {
         article.tags!.map((t) {
-          if(t.name == tag.name) {
-            var a = articles.where((el) => el.articleTitle == article.articleTitle).toList();
-            if(a.isEmpty) {
+          if (t.name == tag.name) {
+            var a = articles
+                .where((el) => el.articleTitle == article.articleTitle)
+                .toList();
+            if (a.isEmpty) {
               articles.add(article);
             }
           }
@@ -64,26 +69,40 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     emit(state.copyWith(sortedArticles: articles, articles: state.articles));
   }
 
-  _unfinished(
-    UnfinishedArticleRead event,
-    Emitter<ArticlesState> emit
-      ) async {
+  _unfinished(UnfinishedArticleRead event, Emitter<ArticlesState> emit) async {
     emit(state.copyWith(unfinishedReadArticle: event.article));
   }
 
-  _savedUnfinishedReadArticle (ArticleSave event, Emitter<ArticlesState> emit) async {
-    if(state.unfinishedReadArticle.articleTitle != null) {
+  _savedUnfinishedReadArticle(
+      ArticleSave event, Emitter<ArticlesState> emit) async {
+    if (state.unfinishedReadArticle.articleTitle != null) {
       var response = articleService.savedArticle(state.unfinishedReadArticle);
     }
   }
 
-  _getUnfinishedReadArticles (_, Emitter<ArticlesState> emit) async {
-    List<Article> unfinishedArticles = await articleService.getSavedUnfinishedArticles();
+  _getUnfinishedReadArticles(_, Emitter<ArticlesState> emit) async {
+    List<Article> unfinishedArticles =
+        await articleService.getSavedUnfinishedArticles();
     emit(state.copyWith(unfinishedReadArticles: unfinishedArticles));
   }
 
-  _removeUnfinishedReadArticle(RemoveUnfinishedReadArticle event, Emitter<ArticlesState> emit) async {
-    List<Article> articles = await articleService.removeSavedArticles(event.id!);
-    emit(state.copyWith(unfinishedReadArticles: articles, unfinishedReadArticle: Article.empty));
+  _removeUnfinishedReadArticle(
+      RemoveUnfinishedReadArticle event, Emitter<ArticlesState> emit) async {
+    List<Article> articles =
+        await articleService.removeSavedArticles(event.id!);
+    emit(state.copyWith(
+        unfinishedReadArticles: articles,
+        unfinishedReadArticle: Article.empty));
+  }
+
+  _savedArticle(SavedArticle event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.userSavedArticle(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    await Future.delayed(Duration(seconds: 2));
+    if(!response.error) {
+      emit(state.copyWith(status: ArticleStatus.success, message: response.message));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    }
   }
 }

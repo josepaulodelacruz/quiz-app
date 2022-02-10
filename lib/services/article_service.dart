@@ -106,7 +106,26 @@ class ArticleService extends ApiService {
     return articles;
   }
 
-  Future<void> deleteDb () async {
+  Future<ArticleResponse> userSavedArticle(SavedArticle event) async {
+    try {
+      var response = await post('/api/user/save-article', {
+        'user_id': event.userId.toString(),
+        'article_id': event.articleId.toString(),
+      });
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(
+        message: error.toString(),
+        status: 400,
+        error: true,
+      );
+    }
   }
 
 }

@@ -83,3 +83,13 @@ class RemoveUnfinishedReadArticle extends ArticleEvent {
   List<Object> get props => [];
 }
 
+class SavedArticle extends ArticleEvent {
+  final int? userId;
+  final int? articleId;
+
+  const SavedArticle({this.userId, this.articleId});
+
+  @override
+  List<Object> get props => [];
+}
+

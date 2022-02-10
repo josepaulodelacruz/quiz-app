@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rte_app/blocs/articles/articles_state.dart';
+import 'package:rte_app/blocs/auth/auth_bloc.dart';
 import 'package:rte_app/blocs/ads/ads_bloc.dart';
 import 'package:rte_app/blocs/ads/ads_state.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
@@ -74,6 +76,12 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
           actions: [
             PopupMenuButton(
               onSelected: (selected) {
+                if(selected == 'Saved') {
+                  context.read<ArticlesBloc>().add(SavedArticle(
+                    userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                    articleId: widget.article.id,
+                  ));
+                }
               },
               itemBuilder: (context) => [
                 PopupMenuItem(
@@ -93,56 +101,69 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
 
           ],
       ),
-      body: SizedBox(
-        width: SizeConfig.screenWidth!,
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _articleTitleSection(context),
-              _iconSection(context),
-              SizedBox(height: 20),
-              _articleHeroImage(context),
-              _articleParagraph(context),
-              BlocBuilder<AdsBloc, AdsState>(
-                builder: (context, state) {
-                  Ads ads = state.ads;
-                  return Column(
-                    children: [
-                      AdsWidget(ads: ads),
-                      _bannerAds(context, ads),
-                    ],
-                  );
-                },
-              ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(20),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: COLOR_PURPLE,
-                    padding: EdgeInsets.all(10),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => ClaimRewardWidget(
-                        onPressed: () {
-                          Navigator.pushNamed(context, quiz_screen, arguments: widget.article);
-                        },
-                      ),
+      body: BlocListener<ArticlesBloc, ArticlesState>(
+        listener: (context, state) {
+          if(state.status == ArticleStatus.loading) {
+            _appUtil.modalHudLoad(context);
+          } else if(state.status == ArticleStatus.success) {
+            Navigator.pop(context);
+            _appUtil.confirmModal(context, title: 'Saved Article', message: state.message);
+          } else {
+            Navigator.pop(context);
+            _appUtil.errorModal(context, title: 'Failed to Saved Article', message: state.message);
+          }
+        },
+        child: SizedBox(
+          width: SizeConfig.screenWidth!,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                _articleTitleSection(context),
+                _iconSection(context),
+                SizedBox(height: 20),
+                _articleHeroImage(context),
+                _articleParagraph(context),
+                BlocBuilder<AdsBloc, AdsState>(
+                  builder: (context, state) {
+                    Ads ads = state.ads;
+                    return Column(
+                      children: [
+                        AdsWidget(ads: ads),
+                        _bannerAds(context, ads),
+                      ],
                     );
                   },
-                  child: Text(
-                    "Claim Rewards",
-                    style: Theme.of(context).textTheme.headline5!.copyWith(
-                      color: Colors.white,
-                    )
-                  )
                 ),
-              )
-            ],
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(20),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: COLOR_PURPLE,
+                      padding: EdgeInsets.all(10),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => ClaimRewardWidget(
+                          onPressed: () {
+                            Navigator.pushNamed(context, quiz_screen, arguments: widget.article);
+                          },
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Claim Rewards",
+                      style: Theme.of(context).textTheme.headline5!.copyWith(
+                        color: Colors.white,
+                      )
+                    )
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
