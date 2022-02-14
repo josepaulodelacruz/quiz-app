@@ -54,6 +54,8 @@ class ApiService {
         return {'message': message};
       }
     } catch (e) {
+      print('api_service');
+      print(e);
       return {'code': 400, 'message': e};
     }
   }

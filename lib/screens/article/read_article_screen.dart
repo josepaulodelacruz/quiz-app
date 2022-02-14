@@ -26,31 +26,31 @@ class ReadArticleScreen extends StatefulWidget {
   const ReadArticleScreen({required this.article});
 
   @override
-  _ReadArticleScreenState createState () =>
-      _ReadArticleScreenState();
+  _ReadArticleScreenState createState() => _ReadArticleScreenState();
 }
 
-
-class _ReadArticleScreenState extends State<ReadArticleScreen>{
+class _ReadArticleScreenState extends State<ReadArticleScreen> {
   ScrollController _scrollController = ScrollController();
   Color backgroundColor = Colors.transparent;
   AppUtil _appUtil = AppUtil();
   double elevation = 0;
 
   @override
-  void initState () {
+  void initState() {
     _scrollController.addListener(_scrollListener);
     super.initState();
   }
 
   _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.minScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.minScrollExtent &&
         !_scrollController.position.outOfRange) {
       backgroundColor = Colors.white;
       elevation = 1;
     }
 
-    if (_scrollController.offset <= _scrollController.position.minScrollExtent &&
+    if (_scrollController.offset <=
+            _scrollController.position.minScrollExtent &&
         !_scrollController.position.outOfRange) {
       backgroundColor = COLOR_GRAY;
       elevation = 0;
@@ -64,53 +64,75 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
       appBar: TransparentAppBarWidget(
-          elevation: elevation,
-          backgroundColor: backgroundColor,
-          onPressed: _confirmationModal,
-          actions: [
-            PopupMenuButton(
-              onSelected: (selected) {
-                if(selected == 'Saved') {
+        elevation: elevation,
+        backgroundColor: backgroundColor,
+        onPressed: _confirmationModal,
+        actions: [
+          PopupMenuButton(
+            onSelected: (selected) {
+              switch (selected) {
+                case 'Saved':
                   context.read<ArticlesBloc>().add(SavedArticle(
-                    userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                    articleId: widget.article.id,
-                  ));
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'Saved',
-                  child: TextButton.icon(onPressed: null, icon: Icon(Icons.save_alt), label: Text('Saved')),
-                ),
-                PopupMenuItem(
-                  value: 'Like',
-                  child: TextButton.icon(onPressed: null, icon: Icon(Icons.favorite_border), label: Text('Like')),
-                ),
-                PopupMenuItem(
-                  value: 'Report',
-                  child: TextButton.icon(onPressed: null, icon: Icon(Icons.report), label: Text('Report')),
-                ),
-              ],
-            )
-
-          ],
+                        userId:
+                            BlocProvider.of<AuthBloc>(context).state.user!.id,
+                        articleId: widget.article.id,
+                      ));
+                  break;
+                default:
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'Saved',
+                child: TextButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.save_alt),
+                    label: Text('Saved')),
+              ),
+              PopupMenuItem(
+                value: 'Like',
+                child: TextButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.favorite_border),
+                    label: Text('Like')),
+              ),
+              PopupMenuItem(
+                value: 'Report',
+                child: TextButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.report),
+                    label: Text('Report')),
+              ),
+            ],
+          )
+        ],
       ),
       body: BlocListener<ArticlesBloc, ArticlesState>(
         listener: (context, state) {
-          if(state.status == ArticleStatus.loading) {
-            _appUtil.modalHudLoad(context);
-          } else if(state.status == ArticleStatus.success) {
-            Navigator.pop(context);
-            _appUtil.confirmModal(context, title: 'Saved Article', message: state.message);
-          } else {
-            Navigator.pop(context);
-            _appUtil.errorModal(context, title: 'Failed to Saved Article', message: state.message);
+          if (mounted) {
+            switch (state.status) {
+              case ArticleStatus.loading:
+                _appUtil.modalHudLoad(context);
+                break;
+              case ArticleStatus.success:
+                Navigator.pop(context);
+                _appUtil.confirmModal(context,
+                    title: 'Saved Article', message: state.message);
+                break;
+              case ArticleStatus.failed:
+                Navigator.pop(context);
+                _appUtil.errorModal(context,
+                    title: 'Failed to Saved Article', message: state.message);
+                break;
+              default:
+                break;
+            }
           }
         },
         child: SizedBox(
@@ -140,27 +162,26 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
                   width: double.infinity,
                   padding: EdgeInsets.all(20),
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: COLOR_PURPLE,
-                      padding: EdgeInsets.all(10),
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => ClaimRewardWidget(
-                          onPressed: () {
-                            Navigator.pushNamed(context, quiz_screen, arguments: widget.article);
-                          },
-                        ),
-                      );
-                    },
-                    child: Text(
-                      "Claim Rewards",
-                      style: Theme.of(context).textTheme.headline5!.copyWith(
-                        color: Colors.white,
-                      )
-                    )
-                  ),
+                      style: ElevatedButton.styleFrom(
+                        primary: COLOR_PURPLE,
+                        padding: EdgeInsets.all(10),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => ClaimRewardWidget(
+                            onPressed: () {
+                              Navigator.pushNamed(context, quiz_screen,
+                                  arguments: widget.article);
+                            },
+                          ),
+                        );
+                      },
+                      child: Text("Claim Rewards",
+                          style:
+                              Theme.of(context).textTheme.headline5!.copyWith(
+                                    color: Colors.white,
+                                  ))),
                 )
               ],
             ),
@@ -195,7 +216,8 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
                       ),
                 ),
                 TextSpan(
-                  text: "published ${timeago.format(DateTime.parse(widget.article.date!))}\n",
+                  text:
+                      "published ${timeago.format(DateTime.parse(widget.article.date!))}\n",
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               ],
@@ -204,11 +226,11 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
               return TextSpan(
                 text: "${tag.name} ",
                 style: Theme.of(context).textTheme.headline5!.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                  fontSize: SizeConfig.blockSizeVertical! * 2,
-                  height: 1.5,
-                ),
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: SizeConfig.blockSizeVertical! * 2,
+                      height: 1.5,
+                    ),
               );
             }).toList(),
           ],
@@ -241,12 +263,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
             ),
           ),
           SizedBox(width: 5),
-          InkWell(
-              onTap: () {},
-              child: Icon(
-                  Icons.cloud_download
-              )
-          ),
+          InkWell(onTap: () {}, child: Icon(Icons.cloud_download)),
         ],
       ),
     );
@@ -281,7 +298,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
   Widget _bannerAds(context, Ads ads) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 20),
-      child:  CachedNetworkImage(
+      child: CachedNetworkImage(
         imageUrl: '${dev_endpoint}/ads/images/footer/footer-ads-default.jpg',
         placeholder: (_, __) {
           return Placeholder();
@@ -290,18 +307,16 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
     );
   }
 
-
-  void _confirmationModal () {
-    _appUtil.confirmModal(
-        context,
+  void _confirmationModal() {
+    _appUtil.confirmModal(context,
         title: "Continue Reading",
         message: "Would you like saved this article for later?",
-        cancelBtn: true,
-        onPressed: () {
-          context.read<ArticlesBloc>().add(UnfinishedArticleRead(article: widget.article));
-          Navigator.pop(context);
-          Navigator.pop(context);
-        }
-    );
+        cancelBtn: true, onPressed: () {
+      context
+          .read<ArticlesBloc>()
+          .add(UnfinishedArticleRead(article: widget.article));
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
   }
 }

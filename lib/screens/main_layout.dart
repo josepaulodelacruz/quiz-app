@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:laravel_echo/laravel_echo.dart';
+import 'package:pusher_client/pusher_client.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
 import 'package:rte_app/blocs/tags/tag_bloc.dart';
 import 'package:rte_app/blocs/tags/tag_event.dart';
+import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/widgets/bottom_navigator_bar.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/models/article.dart';
@@ -32,6 +35,21 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
   ];
+  //
+  // PusherOptions options = PusherOptions(
+  //   host: '10.0.2.2',
+  //   wsPort: 6001,
+  //   encrypted: false,
+  //   auth: PusherAuth(
+  //     '${dev_endpoint}/broadcasting/auth',
+  //     headers: {
+  //       'Authorization': 'Bearer 6|ymTHC8bJz7NN2wSuBTwutayvWXWkDsOgn8QPfnnL',
+  //     }
+  //   )
+  // );
+
+  late PusherClient pusher;
+
 
   @override
   void initState() {
@@ -40,6 +58,10 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
     context.read<TagBloc>().add(GetTags());
     context.read<ArticlesBloc>().add(GetUnfinishedReadArticle());
     user = BlocProvider.of<AuthBloc>(context).state.user!;
+    // pusher =  PusherClient(
+    //     'local_rte_key',
+    //     options,
+    //     enableLogging: true);
     super.initState();
   }
 
@@ -77,14 +99,25 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // context.read<ArticlesBloc>().add(ArticleGetEvent());
-      //     // context.read<ArticlesBloc>().add(ArticleSave(article: Article()));
-      //     // context.read<ArticlesBloc>().add(GetUnfinishedReadArticle());
-      //     // context.read<ArticlesBloc>().add(ArticleGetEvent());
-      //   },
-      //   child: Icon(Icons.add),
+      // floatingActionButton: Row(
+      //   mainAxisAlignment: MainAxisAlignment.end,
+      //   children: [
+      //     FloatingActionButton(
+      //       onPressed: () {
+      //         pusher.disconnect();
+      //       },
+      //       child: Icon(Icons.unarchive),
+      //     ),
+      //     FloatingActionButton(
+      //       onPressed: () async {
+      //         await pusher.connect();
+      //         var channel = pusher.subscribe('private-word.1');
+      //         print(pusher.getSocketId());
+      //         // pusher.subscribe('private-home');
+      //       },
+      //       child: Icon(Icons.add),
+      //     ),
+      //   ],
       // ),
       body: WillPopScope(
         onWillPop: () async {
@@ -101,7 +134,7 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
             ProfileScreen(
               user: user,
             ),
-            // SearchScreen(),
+            SearchScreen(),
             ProfileSettingsScreen(user: user),
             // Navigator(
             //   key: navKeys[0],

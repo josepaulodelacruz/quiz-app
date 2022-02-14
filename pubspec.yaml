@@ -45,7 +45,10 @@ dependencies:
   flutter_html: ^2.2.1
   timeago: ^3.1.0
   localstore: ^1.2.1
-  video_player: ^2.2.17
+  video_player: ^2.2.18
+  pusher_client: ^2.0.0
+  laravel_flutter_pusher: ^0.0.4
+  laravel_echo: ^1.0.0-beta.1
   flutter_cache_manager: ^3.3.0
 #  video_player:
 #    git:

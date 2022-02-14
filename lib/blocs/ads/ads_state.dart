@@ -14,7 +14,7 @@ enum AdsStatus {
   failed,
 }
 
-class AdsState {
+class AdsState extends Equatable {
   const AdsState._({
     this.ads = Ads.empty,
     this.status = AdsStatus.waiting,
@@ -38,5 +38,7 @@ class AdsState {
       fileInfo: fileInfo ?? this.fileInfo,
     );
   }
+
+  @override
   List<Object> get props => [ads, status];
 }

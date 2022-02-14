@@ -58,6 +58,8 @@ class ArticleService extends ApiService {
         error: true,
       );
     } catch (error) {
+      print('this is error');
+      print(error);
       return ArticleResponse(message: error.toString(), error: true);
     }
   }

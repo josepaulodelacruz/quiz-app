@@ -19,20 +19,15 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
 
   _getRandomAds (RandomGetAds event, Emitter<AdsState> emit) async {
     var response = await adsService.getRandomAds();
-    if(state.ads.adsBanner.title == "" && state.ads.adsFooter.title == "" && state.ads.adsVideo.title == "") {
-      emit(state.copyWith(status: AdsStatus.loading));
-      await Future.delayed(Duration(seconds: 1));
-      if(!response.error!) {
-        Ads a = Ads.fromMap(response.collections!);
-        var adVideo = await adsService.cacheAdsVideo('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
-        // var adVideo = adsService.cacheAdsVideo('${dev_endpoint}/ads/videos/1478529571.mp4');
-        emit(state.copyWith(ads: a, status: AdsStatus.success, fileInfo: adVideo));
-      } else {
-        emit(state.copyWith(status: AdsStatus.failed));
-      }
+    emit(state.copyWith(status: AdsStatus.loading));
+    await Future.delayed(Duration(seconds: 1));
+    if(!response.error!) {
+      Ads a = Ads.fromMap(response.collections!);
+      var adVideo = await adsService.cacheAdsVideo('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
+      // var adVideo = adsService.cacheAdsVideo('${dev_endpoint}/ads/videos/1478529571.mp4');
+      emit(state.copyWith(ads: a, status: AdsStatus.success, fileInfo: adVideo));
     } else {
-      emit(state.copyWith(status: AdsStatus.loading));
-      emit(state.copyWith(status: AdsStatus.success));
+      emit(state.copyWith(status: AdsStatus.failed));
     }
   }
 

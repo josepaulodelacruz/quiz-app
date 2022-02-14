@@ -70,14 +70,12 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _unfinished(UnfinishedArticleRead event, Emitter<ArticlesState> emit) async {
-    emit(state.copyWith(unfinishedReadArticle: event.article));
+    emit(state.copyWith(unfinishedReadArticle: event.article, status: ArticleStatus.waiting));
   }
 
   _savedUnfinishedReadArticle(
       ArticleSave event, Emitter<ArticlesState> emit) async {
-    if (state.unfinishedReadArticle.articleTitle != null) {
-      var response = articleService.savedArticle(state.unfinishedReadArticle);
-    }
+    var response = articleService.savedArticle(state.unfinishedReadArticle);
   }
 
   _getUnfinishedReadArticles(_, Emitter<ArticlesState> emit) async {
@@ -104,5 +102,10 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     } else {
       emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
     }
+  }
+
+  @override
+  Future<void> close() {
+    return super.close();
   }
 }
