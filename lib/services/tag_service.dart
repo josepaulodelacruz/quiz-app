@@ -42,8 +42,7 @@ class TagService extends ApiService {
 
   Future<TagResponse> getTags () async {
     try {
-      var token = getIt<CookieBloc>().state.cookie!.session;
-      var response = await get('/api/user/get-tags', token.toString());
+      var response = await get('/api/user/get-tags');
       return TagResponse.fromMap(response);
     } catch (error) {
       return TagResponse(message: error.toString(), error: true);

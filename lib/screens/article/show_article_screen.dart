@@ -17,6 +17,7 @@ import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/common/widgets/primary_button_widget.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:rte_app/models/screen_arguments.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,7 +51,7 @@ class ShowArticleScreen extends StatelessWidget {
             //   }
             // );
 
-            Navigator.pushNamed(context, read_article, arguments: article);
+            Navigator.pushNamed(context, read_article, arguments: ScreenArguments(article: article));
           }
         },
         child: SafeArea(

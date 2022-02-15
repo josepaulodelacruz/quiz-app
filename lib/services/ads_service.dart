@@ -48,7 +48,7 @@ class AdsService extends ApiService {
   Future<AdsResponse> getRandomAds() async {
     try {
       var token = getIt<CookieBloc>().state.cookie!.session;
-      var response = await get('/api/user/get-ads', token.toString());
+      var response = await get('/api/user/get-ads');
       response['status'] = 200;
       return AdsResponse.fromMap(response);
     } on ApiResponseError catch (error) {

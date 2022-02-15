@@ -43,7 +43,7 @@ class Article extends Equatable {
     };
   }
 
-  static const empty = Article();
+  static const empty = Article(category: Category.empty, tags: []);
 
   factory Article.fromMap(Map<String, dynamic> map) {
     List<Tag> tags = <Tag>[];
@@ -65,16 +65,27 @@ class Article extends Equatable {
   }
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [
+    id,
+    authorId,
+    author,
+    articleTitle,
+    coverPhoto,
+    tags,
+    articleContent,
+    date,
+    views,
+    category
+  ];
 
 }
 
 class Category {
-  int? id;
-  String? name;
-  String? icon;
+  final int? id;
+  final String? name;
+  final String? icon;
 
-  Category({this.id, this.name, this.icon});
+  const Category({this.id, this.name, this.icon});
 
   Map<String, dynamic> toMap() {
     return {
@@ -84,20 +95,22 @@ class Category {
     };
   }
 
+  static const empty = Category();
+
   factory Category.fromMap(Map<String,dynamic>map) {
-    var model = Category();
-    model.id = map['id'];
-    model.name = map['name'];
-    model.icon = map['icon'];
-    return model;
+    return Category(
+      id: map['id'],
+      name: map['name'],
+      icon: map['icon'],
+    );
   }
 }
 
 class Tag {
-  String? name;
-  String? icon;
+  final String? name;
+  final String? icon;
 
-  Tag({
+  const Tag({
     this.name,
     this.icon,
   });
@@ -109,10 +122,12 @@ class Tag {
     };
   }
 
+  static const empty = Tag();
+
   factory Tag.fromMap(Map<String, dynamic> map) {
-    var model = Tag();
-    model.name = map['name'];
-    model.icon = map['icon'];
-    return model;
+    return Tag(
+      name: map['name'],
+      icon: map['icon'],
+    );
   }
 }

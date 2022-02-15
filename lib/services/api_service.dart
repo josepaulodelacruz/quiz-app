@@ -22,7 +22,6 @@ class ApiService {
 
   Future<Map<String, dynamic>> get(
       String resources,
-      String rte_token,
       [Map<String, dynamic>? body]
       ) async {
     try {
@@ -30,16 +29,15 @@ class ApiService {
 
       var headers = {
         'Accept': 'application/json',
-        'Cookie': rte_token,
+        'Cookie': getIt<CookieBloc>().state.cookie!.session.toString(),
       };
 
       var result = await http.get(
         Uri.parse(uri),
         headers: headers,
       );
-      var response = jsonDecode(result.body);
 
-      print(response);
+      var response = jsonDecode(result.body);
 
       if(result.statusCode >= 200 && result.statusCode < 400) {
         return response;
@@ -50,8 +48,8 @@ class ApiService {
         } else {
           message = response['message']['reasons'];
         }
-        // throw ApiResponseError(code: 400, message: message);
-        return {'message': message};
+        throw ApiResponseError(code: 400, message: message);
+        // return {'message': message};
       }
     } catch (e) {
       return {'code': 400, 'message': e};

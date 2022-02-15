@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_state.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
+import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/user.dart';
 import 'package:rte_app/screens/profile/widgets/saved_article_card_widget.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
@@ -14,57 +17,61 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 50, bottom: 25),
-              child: CircleAvatar(
-                radius: SizeConfig.blockSizeVertical! * 12,
-                backgroundColor: COLOR_PURPLE,
-                child: CircleAvatar(
-                  radius: SizeConfig.blockSizeVertical! * 11.5,
-                  backgroundColor: Colors.white,
-                  child: FlutterLogo(size: SizeConfig.blockSizeVertical! * 11.5),
-                ),
-              )
-            ),
-            Text(
-              "${user!.firstName} ${user!.lastName}",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                color: COLOR_PURPLE,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 20),
-            Align(
-              alignment: Alignment.center,
-              child: Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Philippines ",
-                      style: Theme.of(context).textTheme.headline4!.copyWith(
-                        color: COLOR_PURPLE
-                      ),
-                    ),
-                    TextSpan(
-                      text: "${DateTime.now().hour}:${DateTime.now().minute} ${DateTime.now().isUtc ? "AM": "PM"}",
-                      style: Theme.of(context).textTheme.headline4!.copyWith(
-                          color: Colors.grey
+      body: BlocBuilder<ArticlesBloc, ArticlesState>(
+        builder: (context, state) {
+          return  SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(top: 50, bottom: 25),
+                    child: CircleAvatar(
+                      radius: SizeConfig.blockSizeVertical! * 12,
+                      backgroundColor: COLOR_PURPLE,
+                      child: CircleAvatar(
+                        radius: SizeConfig.blockSizeVertical! * 11.5,
+                        backgroundColor: Colors.white,
+                        child: FlutterLogo(size: SizeConfig.blockSizeVertical! * 11.5),
                       ),
                     )
-                  ]
-                )
-              ),
+                ),
+                Text(
+                  "${user!.firstName} ${user!.lastName}",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline4!.copyWith(
+                    color: COLOR_PURPLE,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: Text.rich(
+                      TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Philippines ",
+                              style: Theme.of(context).textTheme.headline4!.copyWith(
+                                  color: COLOR_PURPLE
+                              ),
+                            ),
+                            TextSpan(
+                              text: "${DateTime.now().hour}:${DateTime.now().minute} ${DateTime.now().isUtc ? "AM": "PM"}",
+                              style: Theme.of(context).textTheme.headline4!.copyWith(
+                                  color: Colors.grey
+                              ),
+                            )
+                          ]
+                      )
+                  ),
+                ),
+                earnSection(context),
+                SizedBox(height: 20),
+                Expanded(child: savedArticleSection(context, state.getSavedArticles)),
+              ],
             ),
-            earnSection(context),
-            SizedBox(height: 20),
-            Expanded(child: savedArticleSection(context)),
-          ],
-        ),
+          );
+        },
       )
     );
   }
@@ -122,7 +129,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget savedArticleSection (context) {
+  Widget savedArticleSection (context, List<Article> articles) {
     return Column(
       children: [
         ListTile(
@@ -149,9 +156,9 @@ class ProfileScreen extends StatelessWidget {
               child: Row(
                 children: [
                   SizedBox(width: 10),
-                  SavedArticleCardWidget(),
-                  SavedArticleCardWidget(),
-                  SavedArticleCardWidget(),
+                  ...articles.map((article) {
+                    return SavedArticleCardWidget(article: article);
+                  }).toList()
                 ],
               )
             )

@@ -5,6 +5,7 @@ import 'package:rte_app/blocs/cookie/cookie_bloc.dart';
 import 'package:rte_app/blocs/tags/tag_bloc.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/screens/payments/payment_method_screen.dart';
 import 'package:rte_app/services/article_service.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
 
@@ -22,6 +23,8 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     on<GetUnfinishedReadArticle>(_getUnfinishedReadArticles);
     on<RemoveUnfinishedReadArticle>(_removeUnfinishedReadArticle);
     on<SavedArticle>(_savedArticle);
+    on<GetSavedArticles>(_getSavedArtlces);
+    on<DeletedSavedArticles>(_deleteSavedArticles);
   }
 
   _test(ArticleGetEvent event, Emitter<ArticlesState> emit) {
@@ -103,6 +106,30 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
       emit(state.copyWith(status: ArticleStatus.success, message: response.message));
     } else {
       emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    }
+  }
+
+  _getSavedArtlces(GetSavedArticles event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.getSavedArticles(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    await Future.delayed(Duration(seconds: 2));
+    if(!response.error) {
+      List<Article> getSavedArticles = response.collections!.map((collection) {
+        return Article.fromMap(collection['articles']);
+      }).toList();
+      emit(state.copyWith(status: ArticleStatus.success, getSavedArticles: getSavedArticles));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    }
+  }
+
+  _deleteSavedArticles(DeletedSavedArticles event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.deleteSavedArticles(event);
+    if(!response.error) {
+      state.getSavedArticles.removeWhere((element) => element.id == event.articleId);
+      emit(state.copyWith(getSavedArticles: state.getSavedArticles));
+    } else {
+      print(response.message);
     }
   }
 }

@@ -6,12 +6,14 @@ import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/utils.dart';
+import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/user.dart';
 import 'package:rte_app/screens/splash_screen.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   final User? user;
-  const ProfileSettingsScreen({Key? key, this.user }) : super(key: key);
+  final List<Article> savedArticles;
+  const ProfileSettingsScreen({Key? key, this.user, this.savedArticles = const []}) : super(key: key);
 
   @override
   _ProfileSettingsScreenState createState() => _ProfileSettingsScreenState();

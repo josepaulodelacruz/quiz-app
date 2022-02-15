@@ -93,3 +93,27 @@ class SavedArticle extends ArticleEvent {
   List<Object> get props => [];
 }
 
+class GetSavedArticles extends ArticleEvent {
+  final int? userId;
+
+  const GetSavedArticles({this.userId});
+
+  @override
+  List<Object> get props => [];
+}
+
+class DeletedSavedArticles extends ArticleEvent {
+  final int? userId;
+  final int? articleId;
+
+  const DeletedSavedArticles({
+    this.userId,
+    this.articleId,
+  });
+
+  @override
+  List<Object> get props => [];
+}
+
+
+

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/screen_arguments.dart';
 import 'package:rte_app/screens/article/read_article_screen.dart';
 import 'package:rte_app/screens/article/saved_article_screen.dart';
 import 'package:rte_app/screens/article/show_article_screen.dart';
@@ -43,15 +44,20 @@ class PublicRouter {
         return MaterialPageRoute(builder: (_) => CategoryScreen(tags: tags));
       case view_article:
         Article viewArticle = settings.arguments as Article;
-        return MaterialPageRoute(builder: (_) => ShowArticleScreen(article: viewArticle));
+        return MaterialPageRoute(
+            builder: (_) => ShowArticleScreen(article: viewArticle));
       case read_article:
-        Article readArticle = settings.arguments as Article;
-        return CupertinoPageRoute(builder: (_) => ReadArticleScreen(article: readArticle));
+        ScreenArguments arguments = settings.arguments as ScreenArguments;
+        return CupertinoPageRoute(
+            builder: (_) => ReadArticleScreen(
+                article: arguments.article,
+                isViewedSavedArticle: arguments.isViewedSavedArticle));
       case saved_article_screen:
         return CupertinoPageRoute(builder: (_) => SavedArticleScreen());
       case quiz_screen:
         Article readArticle = settings.arguments as Article;
-        return CupertinoPageRoute(builder: (_) => QuizScreen(article: readArticle));
+        return CupertinoPageRoute(
+            builder: (_) => QuizScreen(article: readArticle));
       case quiz_completed:
         return CupertinoPageRoute(builder: (_) => QuizCompletedScreen());
       case profile_screen:

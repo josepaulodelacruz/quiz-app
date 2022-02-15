@@ -22,8 +22,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReadArticleScreen extends StatefulWidget {
   final Article article;
+  final bool isViewedSavedArticle;
 
-  const ReadArticleScreen({required this.article});
+  const ReadArticleScreen({required this.article, this.isViewedSavedArticle = false});
 
   @override
   _ReadArticleScreenState createState () =>
@@ -76,12 +77,21 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
           actions: [
             PopupMenuButton(
               onSelected: (selected) {
-                if(selected == 'Saved') {
+                if(widget.isViewedSavedArticle && selected == "Delete") {
+                  context.read<ArticlesBloc>().add(DeletedSavedArticles(
+                    userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                    articleId: widget.article.id,
+                  ));
+                  Navigator.pop(context);
+                } else if(selected == 'Saved') {
                   context.read<ArticlesBloc>().add(SavedArticle(
                     userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
                     articleId: widget.article.id,
                   ));
+                } else {
+                  print('no');
                 }
+
               },
               itemBuilder: (context) => [
                 PopupMenuItem(
@@ -91,6 +101,10 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
                 PopupMenuItem(
                   value: 'Like',
                   child: TextButton.icon(onPressed: null, icon: Icon(Icons.favorite_border), label: Text('Like')),
+                ),
+                if(widget.isViewedSavedArticle) PopupMenuItem(
+                  value: 'Delete',
+                  child: TextButton.icon(onPressed: null, icon: Icon(Icons.delete), label: Text('Delete')),
                 ),
                 PopupMenuItem(
                   value: 'Report',
@@ -136,32 +150,34 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
                     );
                   },
                 ),
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(20),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: COLOR_PURPLE,
-                      padding: EdgeInsets.all(10),
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => ClaimRewardWidget(
-                          onPressed: () {
-                            Navigator.pushNamed(context, quiz_screen, arguments: widget.article);
-                          },
+                if(!widget.isViewedSavedArticle) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(20),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: COLOR_PURPLE,
+                          padding: EdgeInsets.all(10),
                         ),
-                      );
-                    },
-                    child: Text(
-                      "Claim Rewards",
-                      style: Theme.of(context).textTheme.headline5!.copyWith(
-                        color: Colors.white,
-                      )
-                    )
-                  ),
-                )
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => ClaimRewardWidget(
+                              onPressed: () {
+                                Navigator.pushNamed(context, quiz_screen, arguments: widget.article);
+                              },
+                            ),
+                          );
+                        },
+                        child: Text(
+                            "Claim Rewards",
+                            style: Theme.of(context).textTheme.headline5!.copyWith(
+                              color: Colors.white,
+                            )
+                        )
+                    ),
+                  )
+                ]
               ],
             ),
           ),
@@ -292,16 +308,21 @@ class _ReadArticleScreenState extends State<ReadArticleScreen>{
 
 
   void _confirmationModal () {
-    _appUtil.confirmModal(
-        context,
-        title: "Continue Reading",
-        message: "Would you like saved this article for later?",
-        cancelBtn: true,
-        onPressed: () {
-          context.read<ArticlesBloc>().add(UnfinishedArticleRead(article: widget.article));
-          Navigator.pop(context);
-          Navigator.pop(context);
-        }
-    );
+    if(!widget.isViewedSavedArticle) {
+      _appUtil.confirmModal(
+          context,
+          title: "Continue Reading",
+          message: "Would you like saved this article for later?",
+          cancelBtn: true,
+          onPressed: () {
+            context.read<ArticlesBloc>().add(UnfinishedArticleRead(article: widget.article));
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
+      );
+    } else {
+      Navigator.pop(context);
+    }
+
   }
 }

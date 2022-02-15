@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
@@ -36,10 +37,13 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
-    context.read<ArticlesBloc>().add(ArticleGetEvent());
-    context.read<TagBloc>().add(GetTags());
-    context.read<ArticlesBloc>().add(GetUnfinishedReadArticle());
+    SchedulerBinding.instance!.addPostFrameCallback((_) {
+      context.read<ArticlesBloc>().add(ArticleGetEvent());
+      context.read<TagBloc>().add(GetTags());
+      context.read<ArticlesBloc>().add(GetUnfinishedReadArticle());
+    });
     user = BlocProvider.of<AuthBloc>(context).state.user!;
+    context.read<ArticlesBloc>().add(GetSavedArticles(userId: user.id));
     super.initState();
   }
 
