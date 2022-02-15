@@ -59,6 +59,8 @@ class ArticleService extends ApiService {
         error: true,
       );
     } catch (error) {
+      print('this is error');
+      print(error);
       return ArticleResponse(message: error.toString(), error: true);
     }
   }
@@ -156,12 +158,16 @@ class ArticleService extends ApiService {
       });
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch(error) {
+      print('api response error');
+      print(error);
       return ArticleResponse(
         message: error.message,
         status: 400,
         error: true,
       );
     } catch (error) {
+      print('error');
+      print(error);
       return ArticleResponse(
         message: error.toString(),
         status: 400,

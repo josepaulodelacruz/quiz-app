@@ -52,6 +52,8 @@ class ApiService {
         // return {'message': message};
       }
     } catch (e) {
+      print('api_service');
+      print(e);
       return {'code': 400, 'message': e};
     }
   }
@@ -204,7 +206,8 @@ class ApiService {
         headers: {
           'Accept': 'application/json',
           'Cookie': getIt<CookieBloc>().state.cookie!.session.toString(),
-        }
+        },
+        body: body,
       );
       var response = jsonDecode(result.body);
       return response;

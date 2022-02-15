@@ -6,6 +6,7 @@ import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
 import 'package:rte_app/blocs/tags/tag_bloc.dart';
 import 'package:rte_app/blocs/tags/tag_event.dart';
+import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/widgets/bottom_navigator_bar.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/models/article.dart';
@@ -17,7 +18,7 @@ import 'package:rte_app/screens/profile/profile_settings_screen.dart';
 import 'package:rte_app/screens/search/search_screen.dart';
 
 class MainLayout extends StatefulWidget {
-  MainLayout({Key? key}) : super(key: key);
+  const MainLayout({Key? key}) : super(key: key);
 
   @override
   _MainLayoutState createState() => _MainLayoutState();
@@ -33,6 +34,18 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
   ];
+  //
+  // PusherOptions options = PusherOptions(
+  //   host: '10.0.2.2',
+  //   wsPort: 6001,
+  //   encrypted: false,
+  //   auth: PusherAuth(
+  //     '${dev_endpoint}/broadcasting/auth',
+  //     headers: {
+  //       'Authorization': 'Bearer 6|ymTHC8bJz7NN2wSuBTwutayvWXWkDsOgn8QPfnnL',
+  //     }
+  //   )
+  // );
 
   @override
   void initState() {
@@ -81,15 +94,6 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // context.read<ArticlesBloc>().add(ArticleGetEvent());
-      //     // context.read<ArticlesBloc>().add(ArticleSave(article: Article()));
-      //     // context.read<ArticlesBloc>().add(GetUnfinishedReadArticle());
-      //     // context.read<ArticlesBloc>().add(ArticleGetEvent());
-      //   },
-      //   child: Icon(Icons.add),
-      // ),
       body: WillPopScope(
         onWillPop: () async {
           if(navKeys[pageIndex].currentState!.canPop()) {
@@ -105,7 +109,7 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
             ProfileScreen(
               user: user,
             ),
-            // SearchScreen(),
+            SearchScreen(),
             ProfileSettingsScreen(user: user),
             // Navigator(
             //   key: navKeys[0],

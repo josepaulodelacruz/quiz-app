@@ -32,11 +32,11 @@ class _BottomNavigatorBarWidgetState extends State<BottomNavigatorBarWidget> {
             icon: Icon(Icons.person_pin, color: Colors.black),
             label: "Profile",
           ),
-          // BottomNavigationBarItem(
-          //   activeIcon: Icon(Icons.search, color: COLOR_PURPLE),
-          //   icon: Icon(Icons.search, color: Colors.black),
-          //   label: "Search",
-          // ),
+          BottomNavigationBarItem(
+            activeIcon: Icon(Icons.search, color: COLOR_PURPLE),
+            icon: Icon(Icons.search, color: Colors.black),
+            label: "Search",
+          ),
           BottomNavigationBarItem(
             activeIcon: Icon(Icons.settings, color: COLOR_PURPLE),
             icon: Icon(Icons.settings, color: Colors.black),

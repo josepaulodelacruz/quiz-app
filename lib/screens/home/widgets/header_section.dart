@@ -31,12 +31,12 @@ class HeaderSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Text(
-          //   "Hello, ${user.fullName!}",
-          //   style: Theme.of(context).textTheme.headline4!.copyWith(
-          //     color: Colors.white,
-          //   ),
-          // ),
+          Text(
+            "Hello, ${user.firstName}",
+            style: Theme.of(context).textTheme.headline4!.copyWith(
+              color: Colors.white,
+            ),
+          ),
           SizedBox(height: 10),
           Spacer(),
           Align(

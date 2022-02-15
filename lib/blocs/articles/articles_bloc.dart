@@ -73,14 +73,13 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _unfinished(UnfinishedArticleRead event, Emitter<ArticlesState> emit) async {
-    emit(state.copyWith(unfinishedReadArticle: event.article));
+    emit(state.copyWith(
+        unfinishedReadArticle: event.article, status: ArticleStatus.waiting));
   }
 
   _savedUnfinishedReadArticle(
       ArticleSave event, Emitter<ArticlesState> emit) async {
-    if (state.unfinishedReadArticle.articleTitle != null) {
-      var response = articleService.savedArticle(state.unfinishedReadArticle);
-    }
+    var response = articleService.savedArticle(state.unfinishedReadArticle);
   }
 
   _getUnfinishedReadArticles(_, Emitter<ArticlesState> emit) async {
@@ -102,10 +101,13 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     var response = await articleService.userSavedArticle(event);
     emit(state.copyWith(status: ArticleStatus.loading));
     await Future.delayed(Duration(seconds: 2));
-    if(!response.error) {
-      emit(state.copyWith(status: ArticleStatus.success, message: response.message));
+    if (!response.error) {
+      state.getSavedArticles.add(event.article);
+      emit(state.copyWith(
+          status: ArticleStatus.success, message: response.message, getSavedArticles: state.getSavedArticles));
     } else {
-      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+      emit(state.copyWith(
+          status: ArticleStatus.failed, message: response.message));
     }
   }
 
@@ -113,23 +115,33 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     var response = await articleService.getSavedArticles(event);
     emit(state.copyWith(status: ArticleStatus.loading));
     await Future.delayed(Duration(seconds: 2));
-    if(!response.error) {
+    if (!response.error) {
       List<Article> getSavedArticles = response.collections!.map((collection) {
         return Article.fromMap(collection['articles']);
       }).toList();
-      emit(state.copyWith(status: ArticleStatus.success, getSavedArticles: getSavedArticles));
+      emit(state.copyWith(
+          status: ArticleStatus.success, getSavedArticles: getSavedArticles));
     } else {
-      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+      emit(state.copyWith(
+          status: ArticleStatus.failed, message: response.message));
     }
   }
 
-  _deleteSavedArticles(DeletedSavedArticles event, Emitter<ArticlesState> emit) async {
+  _deleteSavedArticles(
+      DeletedSavedArticles event, Emitter<ArticlesState> emit) async {
     var response = await articleService.deleteSavedArticles(event);
-    if(!response.error) {
-      state.getSavedArticles.removeWhere((element) => element.id == event.articleId);
-      emit(state.copyWith(getSavedArticles: state.getSavedArticles));
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if (!response.error) {
+      state.getSavedArticles
+          .removeWhere((element) => element.id == event.articleId);
+      emit(state.copyWith(getSavedArticles: state.getSavedArticles, status: ArticleStatus.success));
     } else {
-      print(response.message);
+      emit(state.copyWith(status: ArticleStatus.waiting, message: response.message));
     }
+  }
+
+  @override
+  Future<void> close() {
+    return super.close();
   }
 }
