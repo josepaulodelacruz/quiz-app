@@ -193,7 +193,7 @@ class ShowArticleScreen extends StatelessWidget {
                                             color: Colors.blueGrey,
                                             fontWeight: FontWeight.w700,
                                           )),
-                                  subtitle: Text("36,985",
+                                  subtitle: Text("${article.saves}",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1!
@@ -245,6 +245,7 @@ class ShowArticleScreen extends StatelessWidget {
                                 .id!;
                             context.read<ArticlesBloc>().add(ArticleView(
                                 userId: userId, articleId: article.id!));
+                            context.read<ArticlesBloc>().add(CurrentReadArticle(article: article));
                             context.read<AdsBloc>().add(RandomGetAds());
                             // Navigator.pushNamed(context, read_article, arguments: article);
                           },

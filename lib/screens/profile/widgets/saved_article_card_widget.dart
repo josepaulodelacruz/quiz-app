@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/screen_arguments.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_event.dart';
 
 class SavedArticleCardWidget extends StatelessWidget {
   final Article article;
@@ -19,6 +22,7 @@ class SavedArticleCardWidget extends StatelessWidget {
       width: 150,
       child: GestureDetector(
         onTap: () {
+          context.read<ArticlesBloc>().add(CurrentReadArticle(article: article));
           Navigator.pushNamed(context, read_article,
               arguments: ScreenArguments(
                   article: article, isViewedSavedArticle: true));

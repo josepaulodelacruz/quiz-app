@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_event.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
 import 'package:rte_app/blocs/auth/auth_event.dart';
 import 'package:rte_app/common/constants.dart';
@@ -86,7 +88,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                     )
                   ),
                 ),
-                menuSettings(label: "Saved / Like"),
+                menuSettings(label: "Saved / Like", onPressed: () {
+                  context.read<ArticlesBloc>().add(GetLikesArticle(
+                    userId: BlocProvider.of<AuthBloc>(context).state.user!.id ?? 0,
+                  ));
+                  Navigator.pushNamed(context, saves_likes_screen);
+                }),
                 menuSettings(label: "Account Settings"),
                 menuSettings(
                   onPressed: () {

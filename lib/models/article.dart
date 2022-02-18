@@ -11,7 +11,11 @@ class Article extends Equatable {
   final Category? category;
   final String? articleContent;
   final String? date;
+  final bool? isLike;
+  final bool? isSaved;
   final int? views;
+  final int? saves;
+  final int? likes;
 
   const Article({
     this.id,
@@ -23,7 +27,11 @@ class Article extends Equatable {
     this.articleContent,
     this.date,
     this.views,
+    this.saves,
+    this.likes,
     this.category,
+    this.isLike = false,
+    this.isSaved = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -39,7 +47,11 @@ class Article extends Equatable {
       'article_content': articleContent,
       'created_at': date,
       'views': views,
+      'likes': likes,
+      'saves': saves,
       'category': category!.toMap(),
+      'is_liked': isLike,
+      'is_saved': isSaved,
     };
   }
 
@@ -60,7 +72,45 @@ class Article extends Equatable {
       articleContent: map['article_content'],
       date: map['created_at'],
       views: map['views'],
+      likes: map['likes'],
+      saves: map['saves'],
+      isLike: map['is_liked'] == 0 ? false : true,
+      isSaved: map['is_saved'] == 0 ? false : true,
       category: Category.fromMap(map['category']),
+    );
+  }
+
+  Article copyWith({
+      int? id,
+      int? authorId,
+      String? author,
+      String? articleTitle,
+      String? coverPhoto,
+      String? articleContent,
+      String? date,
+      int? views,
+      int? likes,
+      int? saves,
+      bool? isLike,
+      bool? isSaved,
+      Category? category,
+      List<Tag>? tags,
+     }) {
+    return Article(
+      id: id ?? this.id,
+      authorId: authorId ?? this.authorId,
+      author:  author ?? this.author,
+      articleTitle: articleTitle ?? this.articleTitle,
+      coverPhoto: coverPhoto ?? this.coverPhoto,
+      articleContent: articleContent ?? this.articleContent,
+      date: date ?? this.date,
+      views: views ?? this.views,
+      likes:  likes ?? this.likes,
+      saves: saves ?? this.saves,
+      isLike: isLike ?? this.isLike,
+      isSaved: isSaved ?? this.isSaved,
+      category: category ?? this.category,
+      tags: tags ?? this.tags,
     );
   }
 
@@ -75,7 +125,11 @@ class Article extends Equatable {
     articleContent,
     date,
     views,
-    category
+    likes,
+    saves,
+    isLike,
+    isSaved,
+    category,
   ];
 
 }

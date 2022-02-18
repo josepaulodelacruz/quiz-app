@@ -49,7 +49,6 @@ class ArticleService extends ApiService {
 
   Future<ArticleResponse> getVerifiedArticles () async {
     try {
-      var token = getIt<CookieBloc>().state.cookie!.session;
       var response = await get('/api/user/get-articles');
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch (error) {
@@ -158,22 +157,80 @@ class ArticleService extends ApiService {
       });
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch(error) {
-      print('api response error');
-      print(error);
       return ArticleResponse(
         message: error.message,
         status: 400,
         error: true,
       );
     } catch (error) {
-      print('error');
-      print(error);
       return ArticleResponse(
         message: error.toString(),
         status: 400,
         error: true,
       );
-      
+    }
+  }
+
+  Future<ArticleResponse> getLikesOfArticle(int id) async {
+    try {
+      var response = await get('/api/user/get-liked-article/${id}');
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(
+        message: error.toString(),
+        status: 400,
+        error: true,
+      );
+    }
+  }
+
+  Future<ArticleResponse> likingOfArticle(LikeArticle event) async {
+    try {
+      var response = await post('/api/user/like-article', {
+        'article_id': event.articleId.toString(),
+        'user_id': event.userId.toString()
+      });
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+        return ArticleResponse(
+          message: error.message,
+          status: 400,
+          error: true,
+        );
+    } catch (error) {
+      return ArticleResponse(
+        message: error.toString(),
+        status: 400,
+        error: true,
+      );
+    }
+  }
+
+  Future<ArticleResponse> unlikingOfArticle(UnlikeArticle event) async {
+    try {
+      var response = await delete('/api/user/delete-liked-article', {
+        'article_id': event.articleId.toString(),
+        'user_id': event.userId.toString()
+      });
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(
+        message: error.toString(),
+        status: 400,
+        error: true,
+      );
     }
   }
 

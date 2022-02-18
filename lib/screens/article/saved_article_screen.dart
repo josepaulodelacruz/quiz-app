@@ -67,7 +67,8 @@ class _SavedArticleScreenState extends State<SavedArticleScreen> {
                   ],
                 )
               );
-            },)
+            },
+        )
       ),
     );
   }

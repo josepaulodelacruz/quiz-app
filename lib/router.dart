@@ -20,6 +20,7 @@ import 'package:rte_app/screens/profile/profile_settings_screen.dart';
 import 'package:rte_app/screens/quiz/quiz_completed_screen.dart';
 import 'package:rte_app/screens/quiz/quiz_screen.dart';
 import 'package:rte_app/screens/registration/registration_screen.dart';
+import 'package:rte_app/screens/profile/saved_likes_screen.dart';
 import 'package:rte_app/screens/splash_screen.dart';
 
 class PublicRouter {
@@ -64,6 +65,8 @@ class PublicRouter {
         return MaterialPageRoute(builder: (_) => ProfileScreen());
       case profile_settings_screen:
         return MaterialPageRoute(builder: (_) => ProfileSettingsScreen());
+      case saves_likes_screen:
+        return CupertinoPageRoute(builder: (_) => SavedLikesScreen());
       case profile_edit_screen:
         return CupertinoPageRoute(builder: (_) => EditProfileScreen());
       case payments_billins_earning_screen:

@@ -8,6 +8,17 @@ abstract class ArticleEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class CurrentReadArticle extends ArticleEvent {
+  final Article article;
+
+  const CurrentReadArticle({
+    this.article = Article.empty,
+  });
+
+  @override
+  List<Object> get props => [];
+}
+
 class ArticleGetEvent extends ArticleEvent {
 
   const ArticleGetEvent();
@@ -106,8 +117,45 @@ class GetSavedArticles extends ArticleEvent {
 class DeletedSavedArticles extends ArticleEvent {
   final int? userId;
   final int? articleId;
+  final Article? article;
 
   const DeletedSavedArticles({
+    this.userId,
+    this.articleId,
+    this.article,
+  });
+
+  @override
+  List<Object> get props => [];
+}
+
+class GetLikesArticle extends ArticleEvent {
+  final int userId;
+
+  const GetLikesArticle({this.userId = 0});
+
+  @override
+  List<Object> get props => [];
+}
+
+class LikeArticle extends ArticleEvent {
+  final int? userId;
+  final int? articleId;
+
+  const LikeArticle({
+    this.userId,
+    this.articleId,
+  });
+
+  @override
+  List<Object> get props => [];
+}
+
+class UnlikeArticle extends ArticleEvent {
+  final int? userId;
+  final int? articleId;
+
+  const UnlikeArticle({
     this.userId,
     this.articleId,
   });

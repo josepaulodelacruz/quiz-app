@@ -21,10 +21,10 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReadArticleScreen extends StatefulWidget {
-  final Article article;
-  final bool isViewedSavedArticle;
+  Article article;
+  bool isViewedSavedArticle;
 
-  const ReadArticleScreen(
+  ReadArticleScreen(
       {required this.article, this.isViewedSavedArticle = false});
 
   @override
@@ -32,6 +32,7 @@ class ReadArticleScreen extends StatefulWidget {
 }
 
 class _ReadArticleScreenState extends State<ReadArticleScreen> {
+  late Article article;
   ScrollController _scrollController = ScrollController();
   Color backgroundColor = Colors.transparent;
   AppUtil _appUtil = AppUtil();
@@ -39,6 +40,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
 
   @override
   void initState() {
+    article = context.read<ArticlesBloc>().state.currentRead;
     _scrollController.addListener(_scrollListener);
     super.initState();
   }
@@ -77,45 +79,61 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
         actions: [
           PopupMenuButton(
             onSelected: (selected) {
-              if (widget.isViewedSavedArticle && selected == "Delete") {
-                context.read<ArticlesBloc>().add(DeletedSavedArticles(
-                      userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                      articleId: widget.article.id,
-                    ));
-                Navigator.pop(context);
-              } else if (selected == 'Saved') {
+              if (selected == 'Save') {
                 context.read<ArticlesBloc>().add(SavedArticle(
                       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                      articleId: widget.article.id,
-                      article: widget.article,
+                      articleId: article.id,
+                      article: article,
                     ));
-              } else {
-                print('no');
+              } else if (selected == 'Saved') {
+                context.read<ArticlesBloc>().add(DeletedSavedArticles(
+                  userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                  articleId: article.id,
+                  article: article,
+                ));
+                Navigator.pop(context);
+              } else if(selected == "Like") {
+                context.read<ArticlesBloc>().add(LikeArticle(
+                  userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                  articleId: article.id,
+                ));
+              } else if(selected == "Unlike") {
+                context.read<ArticlesBloc>().add(UnlikeArticle(
+                  userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                  articleId: article.id,
+                ));
               }
             },
             itemBuilder: (context) => [
+              !article.isSaved! && !widget.isViewedSavedArticle ?
+              PopupMenuItem(
+                value: 'Save',
+                child: TextButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.save_alt, color: COLOR_PURPLE),
+                    label: Text('Save', style: TextStyle(color: COLOR_PURPLE))),
+
+              ) :
               PopupMenuItem(
                 value: 'Saved',
                 child: TextButton.icon(
                     onPressed: null,
-                    icon: Icon(Icons.save_alt),
-                    label: Text('Saved')),
+                    icon: Icon(Icons.check, color: COLOR_PURPLE),
+                    label: Text('Saved', style: TextStyle(color: COLOR_PURPLE))),
               ),
-              PopupMenuItem(
+              !article.isLike! ? PopupMenuItem(
                 value: 'Like',
                 child: TextButton.icon(
                     onPressed: null,
-                    icon: Icon(Icons.favorite_border),
-                    label: Text('Like')),
+                    icon: Icon(Icons.favorite_border, color: COLOR_PURPLE),
+                    label: Text('Like', style: TextStyle(color: COLOR_PURPLE))),
+              ) : PopupMenuItem(
+                value: 'Unlike',
+                child: TextButton.icon(
+                    onPressed: null,
+                    icon: Icon(Icons.favorite, color: COLOR_PURPLE),
+                    label: Text('Unlike', style: TextStyle(color: COLOR_PURPLE))),
               ),
-              if (widget.isViewedSavedArticle)
-                PopupMenuItem(
-                  value: 'Delete',
-                  child: TextButton.icon(
-                      onPressed: null,
-                      icon: Icon(Icons.delete),
-                      label: Text('Delete')),
-                ),
               PopupMenuItem(
                 value: 'Report',
                 child: TextButton.icon(
@@ -138,6 +156,9 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                 Navigator.pop(context);
                 _appUtil.confirmModal(context,
                     title: 'Saved Article', message: state.message);
+                setState(() {
+                  article = state.currentRead;
+                });
                 break;
               case ArticleStatus.failed:
                 Navigator.pop(context);
@@ -187,7 +208,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                             builder: (_) => ClaimRewardWidget(
                               onPressed: () {
                                 Navigator.pushNamed(context, quiz_screen,
-                                    arguments: widget.article);
+                                    arguments: article);
                               },
                             ),
                           );
@@ -214,7 +235,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
         TextSpan(
           children: <TextSpan>[
             TextSpan(
-              text: "${widget.article.articleTitle!}\n",
+              text: "${article.articleTitle!}\n",
               style: Theme.of(context)
                   .textTheme
                   .headline4!
@@ -225,7 +246,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
               style: TextStyle(height: 2),
               children: <TextSpan>[
                 TextSpan(
-                  text: "${widget.article.author} ",
+                  text: "${article.author} ",
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(
                         color: COLOR_PURPLE,
                         fontWeight: FontWeight.w700,
@@ -233,12 +254,12 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                 ),
                 TextSpan(
                   text:
-                      "published ${timeago.format(DateTime.parse(widget.article.date!))}\n",
+                      "published ${timeago.format(DateTime.parse(article.date!))}\n",
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               ],
             ),
-            ...widget.article.tags!.map((tag) {
+            ...article.tags!.map((tag) {
               return TextSpan(
                 text: "${tag.name} ",
                 style: Theme.of(context).textTheme.headline5!.copyWith(
@@ -289,7 +310,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
     return Padding(
       padding: EdgeInsets.all(20),
       child: Hero(
-        tag: widget.article.id!,
+        tag: article.id!,
         child: CachedNetworkImage(
           imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
           width: SizeConfig.screenWidth,
@@ -306,7 +327,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
       height: 200,
       width: SizeConfig.screenWidth!,
       child: Html(
-        data: widget.article.articleContent!,
+        data: article.articleContent!,
       ),
     );
   }
@@ -331,7 +352,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
           cancelBtn: true, onPressed: () {
         context
             .read<ArticlesBloc>()
-            .add(UnfinishedArticleRead(article: widget.article));
+            .add(UnfinishedArticleRead(article: article));
         Navigator.pop(context);
         Navigator.pop(context);
       });

@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
 import 'package:rte_app/blocs/articles/articles_state.dart';
 import 'package:rte_app/blocs/cookie/cookie_bloc.dart';
 import 'package:rte_app/blocs/tags/tag_bloc.dart';
+import 'package:rte_app/main-dev.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/screens/payments/payment_method_screen.dart';
@@ -15,6 +17,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   ArticlesBloc({
     required this.articleService,
   }) : super(ArticlesState.unknown()) {
+    on<CurrentReadArticle>(_currentRead);
     on<ArticleGetEvent>(_getArticles);
     on<ArticleView>(_viewArticle);
     on<ArticleSortByCategories>(_sortArticles);
@@ -25,10 +28,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     on<SavedArticle>(_savedArticle);
     on<GetSavedArticles>(_getSavedArtlces);
     on<DeletedSavedArticles>(_deleteSavedArticles);
+    on<GetLikesArticle>(_getLikesArticles);
+    on<LikeArticle>(_likeArticle);
+    on<UnlikeArticle>(_unlikeArticle);
   }
 
   _test(ArticleGetEvent event, Emitter<ArticlesState> emit) {
     print('testing article bloc');
+  }
+
+  _currentRead(CurrentReadArticle event, Emitter<ArticlesState> emit) async {
+    emit(state.copyWith(currentRead: event.article));
   }
 
   _getArticles(ArticleGetEvent event, Emitter<ArticlesState> emit) async {
@@ -102,12 +112,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     emit(state.copyWith(status: ArticleStatus.loading));
     await Future.delayed(Duration(seconds: 2));
     if (!response.error) {
-      state.getSavedArticles.add(event.article);
+      List<Article> articles = state.getSavedArticles.toList();
+      articles.add(event.article);
       emit(state.copyWith(
-          status: ArticleStatus.success, message: response.message, getSavedArticles: state.getSavedArticles));
+          status: ArticleStatus.success,
+          message: response.message,
+          getSavedArticles: articles,
+          currentRead: state.currentRead.copyWith(isSaved: true),
+      ));
     } else {
       emit(state.copyWith(
-          status: ArticleStatus.failed, message: response.message));
+          status: ArticleStatus.failed));
     }
   }
 
@@ -117,7 +132,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     await Future.delayed(Duration(seconds: 2));
     if (!response.error) {
       List<Article> getSavedArticles = response.collections!.map((collection) {
-        return Article.fromMap(collection['articles']);
+        return Article.fromMap(collection['article']);
       }).toList();
       emit(state.copyWith(
           status: ArticleStatus.success, getSavedArticles: getSavedArticles));
@@ -132,11 +147,50 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     var response = await articleService.deleteSavedArticles(event);
     emit(state.copyWith(status: ArticleStatus.loading));
     if (!response.error) {
-      state.getSavedArticles
-          .removeWhere((element) => element.id == event.articleId);
-      emit(state.copyWith(getSavedArticles: state.getSavedArticles, status: ArticleStatus.success));
+      List<Article> articles = state.getSavedArticles;
+      articles.removeWhere((element) => element.id == event.articleId);
+      emit(state.copyWith(
+          getSavedArticles: articles,
+          status: ArticleStatus.success));
     } else {
-      emit(state.copyWith(status: ArticleStatus.waiting, message: response.message));
+      emit(state.copyWith(
+          status: ArticleStatus.waiting, message: response.message));
+    }
+  }
+
+  _getLikesArticles(GetLikesArticle event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.getLikesOfArticle(event.userId);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      List<Article> likesArticles = response.collections!.map((collection) {
+        return Article.fromMap(collection['article']);
+      }).toList();
+      emit(state.copyWith(status: ArticleStatus.success, likesArticles: likesArticles));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    }
+  }
+
+  _likeArticle(LikeArticle event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.likingOfArticle(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    await Future.delayed(Duration(seconds: 1));
+    if(!response.error) {
+
+      emit(state.copyWith(status: ArticleStatus.success, message: response.message, currentRead: state.currentRead.copyWith(isLike: true)));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    }
+  }
+
+  _unlikeArticle(UnlikeArticle event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.unlikingOfArticle(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    await Future.delayed(Duration(seconds: 1));
+    if(!response.error) {
+      emit(state.copyWith(status: ArticleStatus.success, currentRead: state.currentRead.copyWith(isLike: false)));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed));
     }
   }
 
