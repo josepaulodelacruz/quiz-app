@@ -129,10 +129,11 @@ class ShowArticleScreen extends StatelessWidget {
                         ),
                         Html(
                           data:
-                              article.articleContent.toString().substring(0, 250),
+                              article.articleContent.toString(),
                         ),
                         SizedBox(height: 10),
                         Divider(thickness: 2),
+                        Spacer(),
                         Wrap(
                           spacing: SizeConfig.blockSizeVertical! * 4,
                           runSpacing: 20,
@@ -247,6 +248,7 @@ class ShowArticleScreen extends StatelessWidget {
                                 userId: userId, articleId: article.id!));
                             context.read<ArticlesBloc>().add(CurrentReadArticle(article: article));
                             context.read<AdsBloc>().add(RandomGetAds());
+                            context.read<ArticlesBloc>().add(ArticleGetContentEvent(id: article.id!));
                             // Navigator.pushNamed(context, read_article, arguments: article);
                           },
                           child: Text(

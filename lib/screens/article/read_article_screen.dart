@@ -24,8 +24,7 @@ class ReadArticleScreen extends StatefulWidget {
   Article article;
   bool isViewedSavedArticle;
 
-  ReadArticleScreen(
-      {required this.article, this.isViewedSavedArticle = false});
+  ReadArticleScreen({required this.article, this.isViewedSavedArticle = false});
 
   @override
   _ReadArticleScreenState createState() => _ReadArticleScreenState();
@@ -87,53 +86,59 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                     ));
               } else if (selected == 'Saved') {
                 context.read<ArticlesBloc>().add(DeletedSavedArticles(
-                  userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                  articleId: article.id,
-                  article: article,
-                ));
-                Navigator.pop(context);
-              } else if(selected == "Like") {
+                      userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                      articleId: article.id,
+                      article: article,
+                    ));
+                setState(() {});
+              } else if (selected == "Like") {
                 context.read<ArticlesBloc>().add(LikeArticle(
-                  userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                  articleId: article.id,
-                ));
-              } else if(selected == "Unlike") {
+                      userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                      articleId: article.id,
+                    ));
+              } else if (selected == "Unlike") {
                 context.read<ArticlesBloc>().add(UnlikeArticle(
-                  userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                  articleId: article.id,
-                ));
+                      userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                      articleId: article.id,
+                    ));
               }
             },
             itemBuilder: (context) => [
-              !article.isSaved! && !widget.isViewedSavedArticle ?
-              PopupMenuItem(
-                value: 'Save',
-                child: TextButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.save_alt, color: COLOR_PURPLE),
-                    label: Text('Save', style: TextStyle(color: COLOR_PURPLE))),
-
-              ) :
-              PopupMenuItem(
-                value: 'Saved',
-                child: TextButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.check, color: COLOR_PURPLE),
-                    label: Text('Saved', style: TextStyle(color: COLOR_PURPLE))),
-              ),
-              !article.isLike! ? PopupMenuItem(
-                value: 'Like',
-                child: TextButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.favorite_border, color: COLOR_PURPLE),
-                    label: Text('Like', style: TextStyle(color: COLOR_PURPLE))),
-              ) : PopupMenuItem(
-                value: 'Unlike',
-                child: TextButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.favorite, color: COLOR_PURPLE),
-                    label: Text('Unlike', style: TextStyle(color: COLOR_PURPLE))),
-              ),
+              !article.isSaved! && !widget.isViewedSavedArticle
+                  ? PopupMenuItem(
+                      value: 'Save',
+                      child: TextButton.icon(
+                          onPressed: null,
+                          icon: Icon(Icons.save_alt, color: COLOR_PURPLE),
+                          label: Text('Save',
+                              style: TextStyle(color: COLOR_PURPLE))),
+                    )
+                  : PopupMenuItem(
+                      value: 'Saved',
+                      child: TextButton.icon(
+                          onPressed: null,
+                          icon: Icon(Icons.check, color: COLOR_PURPLE),
+                          label: Text('Saved',
+                              style: TextStyle(color: COLOR_PURPLE))),
+                    ),
+              !article.isLike!
+                  ? PopupMenuItem(
+                      value: 'Like',
+                      child: TextButton.icon(
+                          onPressed: null,
+                          icon:
+                              Icon(Icons.favorite_border, color: COLOR_PURPLE),
+                          label: Text('Like',
+                              style: TextStyle(color: COLOR_PURPLE))),
+                    )
+                  : PopupMenuItem(
+                      value: 'Unlike',
+                      child: TextButton.icon(
+                          onPressed: null,
+                          icon: Icon(Icons.favorite, color: COLOR_PURPLE),
+                          label: Text('Unlike',
+                              style: TextStyle(color: COLOR_PURPLE))),
+                    ),
               PopupMenuItem(
                 value: 'Report',
                 child: TextButton.icon(
@@ -154,16 +159,22 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                 break;
               case ArticleStatus.success:
                 Navigator.pop(context);
-                _appUtil.confirmModal(context,
-                    title: 'Saved Article', message: state.message);
+                if(state.title != "" && !state.title.contains("Question fetched")) {
+                  _appUtil.confirmModal(context,
+                      title: state.title, message: state.message);
+                } else if(state.title.contains("Question fetched")) {
+                  Navigator.pushNamed(context, quiz_screen,
+                      arguments: article);
+                }
                 setState(() {
                   article = state.currentRead;
                 });
                 break;
               case ArticleStatus.failed:
-                Navigator.pop(context);
-                _appUtil.errorModal(context,
-                    title: 'Failed to Saved Article', message: state.message);
+                if(state.title != "") {
+                  _appUtil.errorModal(context,
+                      title: 'Failed to Saved Article', message: state.message);
+                }
                 break;
               default:
                 break;
@@ -198,26 +209,27 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                     width: double.infinity,
                     padding: EdgeInsets.all(20),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: COLOR_PURPLE,
-                          padding: EdgeInsets.all(10),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => ClaimRewardWidget(
-                              onPressed: () {
-                                Navigator.pushNamed(context, quiz_screen,
-                                    arguments: article);
-                              },
+                      style: ElevatedButton.styleFrom(
+                        primary: COLOR_PURPLE,
+                        padding: EdgeInsets.all(10),
+                      ),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => ClaimRewardWidget(
+                            onPressed: () {
+                              context.read<ArticlesBloc>().add(GetQuizArticle(articleId: article.id));
+                            },
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Claim Rewards",
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
+                              color: Colors.white,
                             ),
-                          );
-                        },
-                        child: Text("Claim Rewards",
-                            style:
-                                Theme.of(context).textTheme.headline5!.copyWith(
-                                      color: Colors.white,
-                                    ))),
+                      ),
+                    ),
                   )
                 ],
               ],
@@ -322,13 +334,17 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
   }
 
   Widget _articleParagraph(context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      height: 200,
-      width: SizeConfig.screenWidth!,
-      child: Html(
-        data: article.articleContent!,
-      ),
+    return BlocBuilder<ArticlesBloc, ArticlesState>(
+      builder: (context, state) {
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 20),
+          height: 200,
+          width: SizeConfig.screenWidth!,
+          child: Html(
+            data: state.articleContent,
+          ),
+        );
+      }
     );
   }
 

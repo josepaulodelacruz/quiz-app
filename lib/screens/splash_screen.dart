@@ -26,6 +26,8 @@ class _SplashScreenState extends State<SplashScreen>{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? user = prefs.getString('user-details');
+      print('get token');
+      print(token);
       if(token == null || token == "") {
         Navigator.pushNamed(context, onboard_screen);
       } else {

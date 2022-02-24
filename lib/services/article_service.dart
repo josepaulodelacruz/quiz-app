@@ -64,6 +64,21 @@ class ArticleService extends ApiService {
     }
   }
 
+  Future<ArticleResponse> articleGetContent(ArticleGetContentEvent event) async {
+    try {
+      var response = await get('/api/user/get-article-content/${event.id}');
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch (error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(message: error.toString(), error: true);
+    }
+  }
+
   Future<ArticleResponse> viewArticle(ArticleView details) async {
     try {
       var token = getIt<CookieBloc>().state.cookie!.session;
@@ -217,6 +232,27 @@ class ArticleService extends ApiService {
       var response = await delete('/api/user/delete-liked-article', {
         'article_id': event.articleId.toString(),
         'user_id': event.userId.toString()
+      });
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(
+        message: error.toString(),
+        status: 400,
+        error: true,
+      );
+    }
+  }
+
+  Future<ArticleResponse> getQuestions (GetQuizArticle event) async {
+    try {
+      var response = await post('/api/user/questions', {
+        'article_id': event.articleId.toString(),
       });
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch(error) {

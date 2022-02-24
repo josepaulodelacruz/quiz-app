@@ -29,7 +29,7 @@ class ApiService {
 
       var headers = {
         'Accept': 'application/json',
-        'Cookie': getIt<CookieBloc>().state.cookie!.session.toString(),
+        'Authorization': "Bearer ${getIt<CookieBloc>().state.cookie!.session.toString()}"
       };
 
       var result = await http.get(
@@ -68,7 +68,7 @@ class ApiService {
 
       var headers = {
         'Accept': 'application/json',
-        'Cookie': getIt<CookieBloc>().state.cookie!.session.toString(),
+        'Authorization': "Bearer ${ getIt<CookieBloc>().state.cookie!.session.toString()}"
       };
 
       var authBody = {};
@@ -142,7 +142,6 @@ class ApiService {
 
       var headers = {
         'Accept': 'application/json',
-        'Cookie': "",
       };
 
       var authBody = {};
@@ -166,14 +165,13 @@ class ApiService {
       var response = jsonDecode(result.body);
       print(response);
 
-      var cookie = prefs.getString('token');
+      var token = prefs.getString('token');
 
-      if(cookie == null || cookie == "") {
-        cookie = result.headers['set-cookie'];
-        prefs.setString('token', cookie.toString());
-        response['token'] = cookie;
+      if(token == null || token == "") {
+        token = response['token'];
+        prefs.setString('token', token.toString());
+        response['token'] = token;
       }
-
 
       if (result.statusCode >= 200 && result.statusCode < 400) {
         response['status'] = 200;
@@ -205,7 +203,7 @@ class ApiService {
         Uri.parse(uri),
         headers: {
           'Accept': 'application/json',
-          'Cookie': getIt<CookieBloc>().state.cookie!.session.toString(),
+          'Authorization': "Bearer ${ getIt<CookieBloc>().state.cookie!.session.toString()}"
         },
         body: body,
       );

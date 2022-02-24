@@ -2,6 +2,7 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/question.dart';
 
 enum ArticleStatus {
   waiting,
@@ -18,8 +19,11 @@ class ArticlesState extends Equatable {
   final List<Article> unfinishedReadArticles;
   final List<Article> getSavedArticles;
   final List<Article> likesArticles;
+  final List<Question> questions;
   final ArticleStatus status;
+  final String articleContent;
   final String message;
+  final String title;
 
   const ArticlesState._({
     this.articles = const [],
@@ -29,8 +33,11 @@ class ArticlesState extends Equatable {
     this.unfinishedReadArticles = const [],
     this.getSavedArticles = const [],
     this.likesArticles = const [],
+    this.questions = const [],
     this.status = ArticleStatus.waiting,
+    this.articleContent = "",
     this.message = "",
+    this.title = "",
   });
 
   const ArticlesState.unknown() : this._();
@@ -43,8 +50,11 @@ class ArticlesState extends Equatable {
     List<Article>? unfinishedReadArticles,
     List<Article>? getSavedArticles,
     List<Article>? likesArticles,
+    List<Question>? questions,
     ArticleStatus? status,
+    String? articleContent,
     String? message,
+    String? title,
   }) {
     return ArticlesState._(
       articles: articles ?? this.articles,
@@ -54,12 +64,15 @@ class ArticlesState extends Equatable {
       unfinishedReadArticles: unfinishedReadArticles ?? this.unfinishedReadArticles,
       getSavedArticles: getSavedArticles ?? this.getSavedArticles,
       likesArticles: likesArticles ?? this.likesArticles,
+      questions: questions ?? this.questions,
       status: status ?? this.status,
+      articleContent: articleContent ?? this.articleContent,
       message: message ?? this.message,
+      title: title ?? this.title,
     );
   }
 
   @override
-  List<Object> get props => [articles, sortedArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, likesArticles, status, message];
+  List<Object> get props => [articles, sortedArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, likesArticles, articleContent, status, message, title];
 
 }

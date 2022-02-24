@@ -19,7 +19,7 @@ class SavedLikesScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: COLOR_PINK,
         centerTitle: true,
-        title: Text('Saved'),
+        title: Text('Saved / Likes'),
       ),
       body: BlocBuilder<ArticlesBloc, ArticlesState>(
         builder: (context, state) {

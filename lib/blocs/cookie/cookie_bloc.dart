@@ -31,22 +31,24 @@ class CookieBloc extends Bloc<CookieEvent, CookieState> {
 
   _storeCookie(CookieStore event, Emitter<CookieState> emit) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    Cookie a = _appUtil.parseCookie(event.cookie!);
-    print(a.session);
-    var parseDate = a.expirationDate.toString().split(' ');
-    var isDate = parseDate[2].split('-');
-    var convertStringMonthToDate = months.indexWhere((el) => el == isDate[1]);
-    String d = "${isDate[2]}-${(convertStringMonthToDate + 1)
-        .toString()
-        .length >= 2 ? (convertStringMonthToDate + 1) : "0${convertStringMonthToDate + 1}" }-${isDate[0]} ${parseDate[3]}";
-    var z = DateTime.parse(d);
-    print('$z = ${DateTime.now()}');
-    if(z.isAfter(DateTime.now())) {
-      prefs.setString('token', "");
-      emit(state.copyWith(status: CookieStatus.expired));
-    } else {
-      emit(state.copyWith(cookie: a, status: CookieStatus.notExpired));
-    }
+    // Cookie a = _appUtil.parseCookie(event.cookie!);
+    // print(a.session);
+    // var parseDate = a.expirationDate.toString().split(' ');
+    // var isDate = parseDate[2].split('-');
+    // var convertStringMonthToDate = months.indexWhere((el) => el == isDate[1]);
+    // String d = "${isDate[2]}-${(convertStringMonthToDate + 1)
+    //     .toString()
+    //     .length >= 2 ? (convertStringMonthToDate + 1) : "0${convertStringMonthToDate + 1}" }-${isDate[0]} ${parseDate[3]}";
+    // var z = DateTime.parse(d);
+    // print('$z = ${DateTime.now()}');
+    // if(z.isAfter(DateTime.now())) {
+    //   prefs.setString('token', "");
+    //   emit(state.copyWith(status: CookieStatus.expired));
+    // } else {
+    //   emit(state.copyWith(cookie: a, status: CookieStatus.notExpired));
+    // }
+
+    emit(state.copyWith(cookie: Cookie(session: event.cookie.toString()), status: CookieStatus.notExpired));
   }
 
 }

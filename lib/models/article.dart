@@ -44,7 +44,7 @@ class Article extends Equatable {
       'tags': [...tags ?? []].map((tag) {
         return tag.toMap();
       }).toList(),
-      'article_content': articleContent,
+      'article_preview': articleContent,
       'created_at': date,
       'views': views,
       'likes': likes,
@@ -69,7 +69,7 @@ class Article extends Equatable {
       articleTitle: map['article_title'],
       coverPhoto: map['cover_photo'],
       tags: tags,
-      articleContent: map['article_content'],
+      articleContent: map['article_preview'],
       date: map['created_at'],
       views: map['views'],
       likes: map['likes'],

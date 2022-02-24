@@ -7,6 +7,7 @@ import 'package:rte_app/blocs/tags/tag_bloc.dart';
 import 'package:rte_app/main-dev.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/question.dart';
 import 'package:rte_app/screens/payments/payment_method_screen.dart';
 import 'package:rte_app/services/article_service.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
@@ -19,6 +20,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }) : super(ArticlesState.unknown()) {
     on<CurrentReadArticle>(_currentRead);
     on<ArticleGetEvent>(_getArticles);
+    on<ArticleGetContentEvent>(_articleGetContent);
     on<ArticleView>(_viewArticle);
     on<ArticleSortByCategories>(_sortArticles);
     on<ArticleSave>(_savedUnfinishedReadArticle);
@@ -31,6 +33,8 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     on<GetLikesArticle>(_getLikesArticles);
     on<LikeArticle>(_likeArticle);
     on<UnlikeArticle>(_unlikeArticle);
+    on<GetQuizArticle>(_getQuizArticle);
+    on<ScoreProcess>(_scoreProcess);
   }
 
   _test(ArticleGetEvent event, Emitter<ArticlesState> emit) {
@@ -60,6 +64,16 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
   _viewArticle(ArticleView event, Emitter<ArticlesState> emit) async {
     await articleService.viewArticle(event);
+  }
+
+  _articleGetContent (ArticleGetContentEvent event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.articleGetContent(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      emit(state.copyWith(status: ArticleStatus.success, title: "", articleContent: response.collections![0]['article_content']));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.loading, title: ""));
+    }
   }
 
   _sortArticles(
@@ -116,6 +130,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
       articles.add(event.article);
       emit(state.copyWith(
           status: ArticleStatus.success,
+          title: "Successfully Saved article!",
           message: response.message,
           getSavedArticles: articles,
           currentRead: state.currentRead.copyWith(isSaved: true),
@@ -135,10 +150,10 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
         return Article.fromMap(collection['article']);
       }).toList();
       emit(state.copyWith(
-          status: ArticleStatus.success, getSavedArticles: getSavedArticles));
+          status: ArticleStatus.success, getSavedArticles: getSavedArticles, message: response.message, title: ""));
     } else {
       emit(state.copyWith(
-          status: ArticleStatus.failed, message: response.message));
+          status: ArticleStatus.failed, message: response.message, title: "Failed to saved article"));
     }
   }
 
@@ -151,10 +166,11 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
       articles.removeWhere((element) => element.id == event.articleId);
       emit(state.copyWith(
           getSavedArticles: articles,
-          status: ArticleStatus.success));
+          currentRead: state.currentRead.copyWith(isSaved: false),
+          status: ArticleStatus.success, title: "", message: ""));
     } else {
       emit(state.copyWith(
-          status: ArticleStatus.waiting, message: response.message));
+          status: ArticleStatus.waiting, message: "Something went wrong, Please try again later.", title: "Failed to unlike"));
     }
   }
 
@@ -176,10 +192,9 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     emit(state.copyWith(status: ArticleStatus.loading));
     await Future.delayed(Duration(seconds: 1));
     if(!response.error) {
-
-      emit(state.copyWith(status: ArticleStatus.success, message: response.message, currentRead: state.currentRead.copyWith(isLike: true)));
+      emit(state.copyWith(status: ArticleStatus.success, title: "", message: response.message, currentRead: state.currentRead.copyWith(isLike: true)));
     } else {
-      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+      emit(state.copyWith(status: ArticleStatus.failed, title: "Failed to like article", message: response.message));
     }
   }
 
@@ -188,10 +203,42 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     emit(state.copyWith(status: ArticleStatus.loading));
     await Future.delayed(Duration(seconds: 1));
     if(!response.error) {
-      emit(state.copyWith(status: ArticleStatus.success, currentRead: state.currentRead.copyWith(isLike: false)));
+      emit(state.copyWith(status: ArticleStatus.success, title: "", currentRead: state.currentRead.copyWith(isLike: false)));
     } else {
-      emit(state.copyWith(status: ArticleStatus.failed));
+      emit(state.copyWith(status: ArticleStatus.failed, title: ""));
     }
+  }
+
+  _getQuizArticle (GetQuizArticle event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.getQuestions(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      List<Question> questions = response.collections!.map((question) {
+        return Question.fromMap(question);
+      }).toList();
+      emit(state.copyWith(status: ArticleStatus.success, title: "Question fetched!", message: response.message, questions: questions));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, title: ""));
+    }
+    emit(state.copyWith(status: ArticleStatus.waiting));
+  }
+
+  _scoreProcess (ScoreProcess event, Emitter<ArticlesState> emit) async {
+    int scores = 0;
+
+    event.questions.map((question) {
+      int index = event.questions.indexOf(question);
+      question.answers!.map((answer) {
+        if(answer.isCorrect!) {
+          if(answer.answer == event.result[index]['answer']) {
+            scores += 1;
+          }
+        }
+      }).toList();
+    }).toList();
+
+    print('USER SCORE is $scores');
+
   }
 
   @override

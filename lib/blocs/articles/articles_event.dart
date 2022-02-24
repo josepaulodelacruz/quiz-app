@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/question.dart';
 
 abstract class ArticleEvent extends Equatable {
   const ArticleEvent();
@@ -25,6 +26,15 @@ class ArticleGetEvent extends ArticleEvent {
 
   @override
   List<Object> get props => [];
+}
+
+class ArticleGetContentEvent extends ArticleEvent {
+  final int id;
+
+  const ArticleGetContentEvent({this.id = 0});
+
+  @override
+  List<Object> get props => [id];
 }
 
 class ArticleSortByCategories extends ArticleEvent {
@@ -164,5 +174,26 @@ class UnlikeArticle extends ArticleEvent {
   List<Object> get props => [];
 }
 
+class GetQuizArticle extends ArticleEvent {
+  final int? articleId;
+
+  const GetQuizArticle({this.articleId});
+
+  @override
+  List<Object> get props => [];
+}
+
+class ScoreProcess extends ArticleEvent {
+  final List<Map<String, dynamic>> result;
+  final List<Question> questions;
+  final int articleId;
+  final int userId;
+
+  const ScoreProcess({this.result = const [], this.questions = const [], this.articleId = 0, this.userId = 0});
+
+  @override
+  List<Object> get props => [result, questions, articleId, userId];
+
+}
 
 
