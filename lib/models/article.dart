@@ -8,6 +8,7 @@ class Article extends Equatable {
   final String? articleTitle;
   final String? coverPhoto;
   final List<Tag>? tags;
+  final List<dynamic>? viewedUsers;
   final Category? category;
   final String? articleContent;
   final String? date;
@@ -24,6 +25,7 @@ class Article extends Equatable {
     this.articleTitle,
     this.coverPhoto,
     this.tags,
+    this.viewedUsers,
     this.articleContent,
     this.date,
     this.views,
@@ -59,9 +61,12 @@ class Article extends Equatable {
 
   factory Article.fromMap(Map<String, dynamic> map) {
     List<Tag> tags = <Tag>[];
-    map['tags'].map((tag) {
-      tags.add(Tag(name: tag['name']));
-    }).toList();
+    if(map['tags'] != null) {
+      map['tags'].map((tag) {
+        tags.add(Tag(name: tag['name']));
+      }).toList() ?? [];
+    }
+
     return Article(
       id: map['id'],
       authorId: map['author_id'],
@@ -69,6 +74,7 @@ class Article extends Equatable {
       articleTitle: map['article_title'],
       coverPhoto: map['cover_photo'],
       tags: tags,
+      viewedUsers: map['user_viewed_article'] ?? [],
       articleContent: map['article_preview'],
       date: map['created_at'],
       views: map['views'],
@@ -76,7 +82,7 @@ class Article extends Equatable {
       saves: map['saves'],
       isLike: map['is_liked'] == 0 ? false : true,
       isSaved: map['is_saved'] == 0 ? false : true,
-      category: Category.fromMap(map['category']),
+      category: map['category'] != null ? Category.fromMap(map['category']) : null,
     );
   }
 
@@ -131,6 +137,10 @@ class Article extends Equatable {
     isSaved,
     category,
   ];
+
+  bool checkIfNull () {
+    return [id, authorId, author, articleTitle, coverPhoto, tags, articleTitle, date, views, likes, saves, isLike, isSaved, category].isEmpty;
+  }
 
 }
 

@@ -9,7 +9,9 @@ import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class QuizCompletedScreen extends StatelessWidget {
-  const QuizCompletedScreen({Key? key}) : super(key: key);
+  final List<Map<String, dynamic>> result;
+
+  const QuizCompletedScreen({Key? key, required this.result}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -86,14 +88,14 @@ class QuizCompletedScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "100%",
+                      "${result[0]['details']['percentage']}%",
                       style: Theme.of(context).textTheme.headline5!.copyWith(
                         fontSize: SizeConfig.blockSizeVertical! * 4.5,
                         color: COLOR_PINK,
                       ),
                     ),
                     Text(
-                      "5/5",
+                      "${result[0]['details']['score']}/5",
                       style: Theme.of(context).textTheme.headline5!.copyWith(
                         fontSize: SizeConfig.blockSizeVertical! * 4.5,
                         color: COLOR_PINK,

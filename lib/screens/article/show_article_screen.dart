@@ -9,6 +9,8 @@ import 'package:rte_app/blocs/ads/ads_state.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
 import 'package:rte_app/blocs/articles/articles_state.dart';
+import 'package:rte_app/blocs/auth/auth_event.dart';
+import 'package:rte_app/blocs/auth/auth_state.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
@@ -54,219 +56,270 @@ class ShowArticleScreen extends StatelessWidget {
             Navigator.pushNamed(context, read_article, arguments: ScreenArguments(article: article));
           }
         },
-        child: SafeArea(
-          child: SizedBox(
-            height: SizeConfig.screenHeight!,
-            width: SizeConfig.screenWidth!,
-            child: Column(
-              children: [
-                Container(
-                  color: Colors.lightBlue,
-                  height: SizeConfig.screenHeight! * .25,
-                  child: Stack(
-                    children: [
-                      Hero(
-                        tag: article.id!,
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              '${dev_endpoint}/articles/articles-default.jpg',
-                          width: SizeConfig.screenWidth,
-                          height: SizeConfig.screenHeight,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Padding(
-                          padding: EdgeInsets.all(20),
-                          child: CircleAvatar(
-                              backgroundColor: Colors.black.withOpacity(.5),
-                              child: Icon(Icons.close)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if(state.status == AuthStatus.loading) {
+              _appUtil.modalHudLoad(context);
+            } else if(state.status == AuthStatus.success) {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, profile_screen, arguments: state.viewedUser);
+            } else if(state.status == AuthStatus.failed) {
+              Navigator.pop(context);
+              print('failed');
+            }
+          },
+          child: SafeArea(
+            child: SizedBox(
+              height: SizeConfig.screenHeight!,
+              width: SizeConfig.screenWidth!,
+              child: Column(
+                children: [
+                  Container(
+                    color: Colors.lightBlue,
+                    height: SizeConfig.screenHeight! * .25,
+                    child: Stack(
                       children: [
-                        SizedBox(height: 20),
-                        Text(article.articleTitle!,
-                            textAlign: TextAlign.start,
-                            style:
-                                Theme.of(context).textTheme.headline5!.copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Html(
-                            data: article.articleContent
-                                .toString()
-                                .substring(0, 50),
+                        Hero(
+                          tag: article.id!,
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                '${dev_endpoint}/articles/articles-default.jpg',
+                            width: SizeConfig.screenWidth,
+                            height: SizeConfig.screenHeight,
+                            fit: BoxFit.cover,
                           ),
-                          subtitle: Text("Writer: ${article.author!}",
-                              style:
-                                  Theme.of(context).textTheme.bodyText1!.copyWith(
-                                        color: COLOR_DARK_GRAY,
-                                      )),
-                          trailing: Text(
-                              timeago.format(DateTime.parse(article.date!)),
-                              style:
-                                  Theme.of(context).textTheme.bodyText1!.copyWith(
-                                        height: 3.5,
-                                        color: COLOR_DARK_GRAY,
-                                      )),
                         ),
-                        Html(
-                          data:
-                              article.articleContent.toString(),
-                        ),
-                        SizedBox(height: 10),
-                        Divider(thickness: 2),
-                        Spacer(),
-                        Wrap(
-                          spacing: SizeConfig.blockSizeVertical! * 4,
-                          runSpacing: 20,
-                          children: [
-                            Container(
-                                width: SizeConfig.screenWidth! * .4,
-                                height: 50,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: Container(
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.lightGreenAccent.withOpacity(.5),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  title: Text("Category",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                            fontSize:
-                                                SizeConfig.blockSizeVertical! *
-                                                    1.8,
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.w700,
-                                          )),
-                                  subtitle: Text(article.category!.name!,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w700,
-                                          )),
-                                )),
-                            Container(
-                                width: SizeConfig.screenWidth! * .4,
-                                height: 50,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: Container(
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                      color: Colors.blueGrey.withOpacity(.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  title: Text("Saved",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                            fontSize:
-                                                SizeConfig.blockSizeVertical! *
-                                                    1.8,
-                                            color: Colors.blueGrey,
-                                            fontWeight: FontWeight.w700,
-                                          )),
-                                  subtitle: Text("${article.saves}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                            color: Colors.black87,
-                                            fontWeight: FontWeight.w700,
-                                          )),
-                                )),
-                            Container(
-                                width: SizeConfig.screenWidth! * .4,
-                                height: 50,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: Container(
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                      color: Colors.orangeAccent.withOpacity(.2),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  title: Text("Views",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                            fontSize:
-                                                SizeConfig.blockSizeVertical! *
-                                                    1.8,
-                                            color: Colors.orangeAccent,
-                                            fontWeight: FontWeight.w700,
-                                          )),
-                                  subtitle: Text(article.views.toString(),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                            color: Colors.orangeAccent,
-                                            fontWeight: FontWeight.w700,
-                                          )),
-                                )),
-                          ],
-                        ),
-                        Spacer(),
-                        PrimaryButtonWidget(
-                          onPressed: () {
-                            int userId = BlocProvider.of<AuthBloc>(context)
-                                .state
-                                .user!
-                                .id!;
-                            context.read<ArticlesBloc>().add(ArticleView(
-                                userId: userId, articleId: article.id!));
-                            context.read<ArticlesBloc>().add(CurrentReadArticle(article: article));
-                            context.read<AdsBloc>().add(RandomGetAds());
-                            context.read<ArticlesBloc>().add(ArticleGetContentEvent(id: article.id!));
-                            // Navigator.pushNamed(context, read_article, arguments: article);
-                          },
-                          child: Text(
-                            "Read Now",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(
-                                    fontSize: SizeConfig.blockSizeVertical! * 2.5,
-                                    color: Colors.white,
-                                    letterSpacing: 5),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: CircleAvatar(
+                                backgroundColor: Colors.black.withOpacity(.5),
+                                child: Icon(Icons.close)),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
-                )
-              ],
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: 20),
+                          Text(article.articleTitle!,
+                              textAlign: TextAlign.start,
+                              style:
+                                  Theme.of(context).textTheme.headline5!.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      )),
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Html(
+                              data: article.articleContent
+                                  .toString()
+                                  .substring(0, 50),
+                            ),
+                            subtitle: InkWell(
+                              onTap: () {
+                                context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
+                                // Navigator.pushNamed(context, profile_screen, arguments: BlocProvider.of<AuthBloc>(context).state.viewedAuthor);
+                                // Navigator.pushNamed(context, profile_screen);
+                              },
+                              child: Text("Writer: ${article.author!}",
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1!.copyWith(
+                                            color: COLOR_DARK_GRAY,
+                                          )),
+                            ),
+                            trailing: Text(
+                                timeago.format(DateTime.parse(article.date!)),
+                                style:
+                                    Theme.of(context).textTheme.bodyText1!.copyWith(
+                                          height: 3.5,
+                                          color: COLOR_DARK_GRAY,
+                                        )),
+                          ),
+                          Html(
+                            data:
+                                article.articleContent.toString(),
+                          ),
+                          SizedBox(height: 10),
+                          Divider(thickness: 2),
+                          Spacer(),
+                          Wrap(
+                            spacing: SizeConfig.blockSizeVertical! * 4,
+                            runSpacing: 20,
+                            children: [
+                              Container(
+                                  width: SizeConfig.screenWidth! * .4,
+                                  height: 50,
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: Container(
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Colors.lightGreenAccent.withOpacity(.5),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    title: Text("Category",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                              fontSize:
+                                                  SizeConfig.blockSizeVertical! *
+                                                      1.8,
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.w700,
+                                            )),
+                                    subtitle: Text(article.category!.name!,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w700,
+                                            )),
+                                  )),
+                              Container(
+                                  width: SizeConfig.screenWidth! * .4,
+                                  height: 50,
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: Container(
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        color: Colors.blueGrey.withOpacity(.2),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    title: Text("Saved",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                              fontSize:
+                                                  SizeConfig.blockSizeVertical! *
+                                                      1.8,
+                                              color: Colors.blueGrey,
+                                              fontWeight: FontWeight.w700,
+                                            )),
+                                    subtitle: Text("${article.saves}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                              color: Colors.black87,
+                                              fontWeight: FontWeight.w700,
+                                            )),
+                                  )),
+                              InkWell(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (_) {
+                                      return Container(
+                                        height: SizeConfig.screenHeight! * .5,
+                                        padding: EdgeInsets.symmetric(horizontal: 15),
+                                        color: COLOR_WHITE,
+                                        child: ListView(
+                                          children: [
+                                            SizedBox(height: 20),
+                                            ...article.viewedUsers!.map((viewers) {
+                                              return ListTile(
+                                                onTap: () {
+                                                  context.read<AuthBloc>().add(AuthViewUser(userId: viewers['id']));
+                                                },
+                                                leading: CircleAvatar(
+                                                  backgroundColor: COLOR_PURPLE,
+                                                  child: Text(viewers['full_name'].substring(0, 1), style: TextStyle(color: COLOR_WHITE)),
+                                                ),
+                                                title: Text(viewers['full_name']),
+                                              );
+                                            }).toList(),
+                                          ],
+                                        )
+                                      );
+                                    }
+                                  );
+                                },
+                                child: Container(
+                                    width: SizeConfig.screenWidth! * .4,
+                                    height: 50,
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: Container(
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                          color: Colors.orangeAccent.withOpacity(.2),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      title: Text("Views",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1!
+                                              .copyWith(
+                                                fontSize:
+                                                    SizeConfig.blockSizeVertical! *
+                                                        1.8,
+                                                color: Colors.orangeAccent,
+                                                fontWeight: FontWeight.w700,
+                                              )),
+                                      subtitle: Text(article.views.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1!
+                                              .copyWith(
+                                                color: Colors.orangeAccent,
+                                                fontWeight: FontWeight.w700,
+                                              )),
+                                    )),
+                              ),
+                            ],
+                          ),
+                          Spacer(),
+                          PrimaryButtonWidget(
+                            onPressed: () {
+                              int userId = BlocProvider.of<AuthBloc>(context)
+                                  .state
+                                  .user!
+                                  .id!;
+                              context.read<ArticlesBloc>().add(ArticleView(
+                                  userId: userId, articleId: article.id!));
+                              context.read<ArticlesBloc>().add(CurrentReadArticle(article: article));
+                              context.read<AdsBloc>().add(RandomGetAds());
+                              context.read<ArticlesBloc>().add(ArticleGetContentEvent(id: article.id!));
+                              // Navigator.pushNamed(context, read_article, arguments: article);
+                            },
+                            child: Text(
+                              "Read Now",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                      fontSize: SizeConfig.blockSizeVertical! * 2.5,
+                                      color: Colors.white,
+                                      letterSpacing: 5),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

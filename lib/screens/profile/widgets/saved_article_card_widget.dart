@@ -23,6 +23,7 @@ class SavedArticleCardWidget extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           context.read<ArticlesBloc>().add(CurrentReadArticle(article: article));
+          context.read<ArticlesBloc>().add(ArticleGetContentEvent(id: article.id!));
           Navigator.pushNamed(context, read_article,
               arguments: ScreenArguments(
                   article: article, isViewedSavedArticle: true));

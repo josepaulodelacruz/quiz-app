@@ -68,3 +68,20 @@ class AuthLogout extends AuthEvent {
   @override
   List<Object> get props => [];
 }
+
+class AuthViewUser extends AuthEvent {
+  final int userId;
+  const AuthViewUser({this.userId = 0});
+
+  @override
+  List<Object> get props => [userId];
+}
+
+class AuthViewAuthor extends AuthEvent {
+  final int authorId;
+
+  const AuthViewAuthor({this.authorId = 0});
+
+  @override
+  List<Object> get props => [authorId];
+}

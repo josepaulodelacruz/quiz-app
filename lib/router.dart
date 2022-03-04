@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/screen_arguments.dart';
+import 'package:rte_app/models/user.dart';
 import 'package:rte_app/screens/article/read_article_screen.dart';
 import 'package:rte_app/screens/article/saved_article_screen.dart';
 import 'package:rte_app/screens/article/show_article_screen.dart';
@@ -60,9 +61,11 @@ class PublicRouter {
         return CupertinoPageRoute(
             builder: (_) => QuizScreen(article: readArticle));
       case quiz_completed:
-        return CupertinoPageRoute(builder: (_) => QuizCompletedScreen());
+        List<Map<String, dynamic>> result = settings.arguments as List<Map<String, dynamic>>;
+        return CupertinoPageRoute(builder: (_) => QuizCompletedScreen(result: result));
       case profile_screen:
-        return MaterialPageRoute(builder: (_) => ProfileScreen());
+        User user = settings.arguments as User;
+        return MaterialPageRoute(builder: (_) => ProfileScreen(user: user));
       case profile_settings_screen:
         return MaterialPageRoute(builder: (_) => ProfileSettingsScreen());
       case saves_likes_screen:

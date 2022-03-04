@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
@@ -103,13 +105,15 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
   _savedUnfinishedReadArticle(
       ArticleSave event, Emitter<ArticlesState> emit) async {
-    var response = articleService.savedArticle(state.unfinishedReadArticle);
+    if(state.unfinishedReadArticle.articleTitle != null) {
+       var response = articleService.savedArticle(state.unfinishedReadArticle);
+    }
   }
 
   _getUnfinishedReadArticles(_, Emitter<ArticlesState> emit) async {
     List<Article> unfinishedArticles =
         await articleService.getSavedUnfinishedArticles();
-    emit(state.copyWith(unfinishedReadArticles: unfinishedArticles));
+    emit(state.copyWith(unfinishedReadArticles: unfinishedArticles, status: ArticleStatus.success, unfinishedReadArticle: Article.empty));
   }
 
   _removeUnfinishedReadArticle(
@@ -225,20 +229,57 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
   _scoreProcess (ScoreProcess event, Emitter<ArticlesState> emit) async {
     int scores = 0;
-
+    List<Map<String, dynamic>> body = [];
+    List<Map<String, dynamic>> results = List.generate(event.questions.length, (index) => {});
+    emit(state.copyWith(status: ArticleStatus.loading));
     event.questions.map((question) {
       int index = event.questions.indexOf(question);
       question.answers!.map((answer) {
         if(answer.isCorrect!) {
           if(answer.answer == event.result[index]['answer']) {
+            results[index] = {
+              'question_id': question.id.toString(),
+              'answer_id': answer.id.toString(),
+              'is_correctly_answered': 1,
+            };
             scores += 1;
           }
+        }
+
+        if(results[index].isEmpty) {
+          results[index] = {
+            'question_id': question.id.toString(),
+            'answer_id': answer.id.toString(),
+            'is_correctly_answered': 0,
+          };
         }
       }).toList();
     }).toList();
 
-    print('USER SCORE is $scores');
+    double percentage = scores  / event.questions.length * 100;
 
+    Map<String, dynamic> content = {
+      'details': {
+        'user_id': event.userId.toString(),
+        'article_id': event.articleId.toString(),
+        'score': scores.toString(),
+        'percentage': percentage.toString(),
+      },
+    };
+    Map<String, dynamic> _results = {
+      'results': results,
+    };
+    body.add(content);
+    body.add(_results);
+
+    var response = await articleService.scoreResult(body);
+    if(!response.error) {
+      emit(state.copyWith(status: ArticleStatus.success, title: "", overall: body));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.success, title: "Something went wrong!", message: "Please try again later"));
+    }
+
+    emit(state.copyWith(status: ArticleStatus.waiting));
   }
 
   @override

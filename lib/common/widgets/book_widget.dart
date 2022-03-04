@@ -1,16 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rte_app/common/constants.dart';
+import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
+import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/screens/article/show_article_screen.dart';
+import 'package:intl/intl.dart';
 
 class BookWidget extends StatelessWidget {
-  final Article article;
-  final bool continueReading;
+  Article article;
+  bool continueReading;
+  final _appUtils = AppUtil();
 
-  const BookWidget({Key? key, required this.article, this.continueReading = false}) : super(key: key);
+  BookWidget({Key? key, required this.article, this.continueReading = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +65,7 @@ class BookWidget extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.2),
                   ),
                   Text(
-                    "Dec 12, 2021",
+                    "${_appUtils.convertDateTimeToString(DateTime.parse(article.date!))}",
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.2),
                   ),
                 ],

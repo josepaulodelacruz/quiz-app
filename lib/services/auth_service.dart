@@ -27,14 +27,14 @@ class AuthResponse {
       return model
           ..status = map['status']
           ..message = map['message']
-          ..error = map['error']
+          ..error = false
           ..token = map['token']
           ..collections = map['body'];
     }
 
     model.status = map['status'];
     model.message = map['message'];
-    model.error = map['error'];
+    model.error = true;
     return model;
   }
 
@@ -100,6 +100,28 @@ class AuthService extends ApiService {
         'user_type': 'Individual',
       });
       response['data'] = response['data'][0];
+      return AuthResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+      return AuthResponse(status: 401, error: true, message: error.message);
+    } catch (error) {
+      return AuthResponse(status: 401, error: true, message: 'Something went wrong');
+    }
+  }
+
+  Future<AuthResponse> viewedUser(int id) async {
+    try {
+      var response = await get('/api/user/get-user/${id}');
+      return AuthResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+      return AuthResponse(status: 401, error: true, message: error.message);
+    } catch (error) {
+      return AuthResponse(status: 401, error: true, message: 'Something went wrong');
+    }
+  }
+
+  Future<AuthResponse> viewedAuthor(int id) async {
+    try {
+      var response = await get('/api/user/get-author/${id}');
       return AuthResponse.fromMap(response);
     } on ApiResponseError catch(error) {
       return AuthResponse(status: 401, error: true, message: error.message);

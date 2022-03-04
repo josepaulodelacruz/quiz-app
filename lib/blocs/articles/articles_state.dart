@@ -21,6 +21,7 @@ class ArticlesState extends Equatable {
   final List<Article> likesArticles;
   final List<Question> questions;
   final ArticleStatus status;
+  final List<Map<String, dynamic>> overall;
   final String articleContent;
   final String message;
   final String title;
@@ -34,6 +35,7 @@ class ArticlesState extends Equatable {
     this.getSavedArticles = const [],
     this.likesArticles = const [],
     this.questions = const [],
+    this.overall = const [],
     this.status = ArticleStatus.waiting,
     this.articleContent = "",
     this.message = "",
@@ -51,6 +53,7 @@ class ArticlesState extends Equatable {
     List<Article>? getSavedArticles,
     List<Article>? likesArticles,
     List<Question>? questions,
+    List<Map<String, dynamic>>? overall,
     ArticleStatus? status,
     String? articleContent,
     String? message,
@@ -65,6 +68,7 @@ class ArticlesState extends Equatable {
       getSavedArticles: getSavedArticles ?? this.getSavedArticles,
       likesArticles: likesArticles ?? this.likesArticles,
       questions: questions ?? this.questions,
+      overall: overall ?? this.overall,
       status: status ?? this.status,
       articleContent: articleContent ?? this.articleContent,
       message: message ?? this.message,
@@ -73,6 +77,6 @@ class ArticlesState extends Equatable {
   }
 
   @override
-  List<Object> get props => [articles, sortedArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, likesArticles, articleContent, status, message, title];
+  List<Object> get props => [articles, sortedArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, likesArticles, overall, articleContent, status, message, title];
 
 }

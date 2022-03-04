@@ -25,6 +25,12 @@ class AppUtil {
     return parseCookie;
   }
 
+  String convertDateTimeToString(DateTime dt) => '${dt.year}-'
+      '${dt.month.toString().padLeft(2, '0')}-'
+      '${dt.day.toString().padLeft(2, '0')} '
+      '${dt.hour.toString().padLeft(2, '0')}:'
+      '${dt.minute.toString().padLeft(2, '0')}';
+
   String timeAgoSinceDate(String dateString, {bool numericDates = true}) {
     DateTime notificationDate = DateFormat("dd-MM-yyyy h:mma").parse(dateString);
     final date2 = DateTime.now();

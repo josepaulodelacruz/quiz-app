@@ -125,6 +125,66 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> postJson(
+      String resource,
+      String body,
+      ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      String uri = '$endpoint$resource';
+
+      var headers = {
+        'Accept': 'application/json',
+        'Authorization': "Bearer ${ getIt<CookieBloc>().state.cookie!.session.toString()}"
+      };
+
+      var result = await http.post(
+        Uri.parse(uri),
+        headers: headers,
+        body: body,
+      ).timeout(
+          Duration(seconds: 15),
+          onTimeout: () {
+            throw TimeoutException("The connection has timed out, Please try again!");
+          }
+      );
+
+      var response = jsonDecode(result.body);
+
+      print('response ${response}');
+
+      var cookie = prefs.getString('token');
+
+      if(cookie == null || cookie == "") {
+        cookie = result.headers['set-cookie'];
+        prefs.setString('token', cookie.toString());
+        response['token'] = cookie;
+      }
+
+
+      if (result.statusCode >= 200 && result.statusCode < 400) {
+        response['status'] = 200;
+        response['error'] = false;
+        response['message'] = response['message'];
+        return response;
+      } else {
+        String message;
+        Map<String, dynamic> errorResponse = {};
+        if (response["message"].runtimeType == String) {
+          errorResponse['status'] = response['status'];
+          errorResponse['error'] = response['error'];
+          errorResponse['message'] = response['message'];
+          return errorResponse;
+        } else {
+          message = response['message']["reason"];
+        }
+        throw ApiResponseError(code: response["code"], message: message);
+      }
+    } catch (e) {
+      return {'code': 400, 'message': e};
+    }
+  }
+
   Future<Map<String, dynamic>> loginPost(
       String resource,
       [Map<String, String>? body]

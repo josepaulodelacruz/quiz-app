@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:localstore/localstore.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
@@ -254,6 +255,26 @@ class ArticleService extends ApiService {
       var response = await post('/api/user/questions', {
         'article_id': event.articleId.toString(),
       });
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch(error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(
+        message: error.toString(),
+        status: 400,
+        error: true,
+      );
+    }
+  }
+
+  Future<ArticleResponse> scoreResult (body) async  {
+    try {
+      var a = {"body": body};
+      var response = await postJson('/api/user/score-and-results', jsonEncode(a));
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch(error) {
       return ArticleResponse(

@@ -9,6 +9,7 @@ import 'package:rte_app/blocs/auth/auth_bloc.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
+import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/common/widgets/ads_banner_widget.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,7 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
+  AppUtil _appUtil = AppUtil();
   int pageIndex = 1;
   int _index = 0;
   late List<Map<String, dynamic>> result;
@@ -76,128 +78,150 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
         titleSpacing: -10,
       ),
-      body: SizedBox(
-          height: SizeConfig.screenHeight!,
-          width: SizeConfig.screenWidth!,
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  Container(
-                    height: 150,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 40,
-                          padding: EdgeInsets.all(5),
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 25),
-                          width: SizeConfig.screenWidth,
-                          decoration: BoxDecoration(
-                            color: COLOR_PINK,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Stack(
-                            children: [
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 200),
-                                width: SizeConfig.screenWidth! *
-                                    timePercentageLimit,
-                                height: SizeConfig.screenHeight,
-                                decoration: BoxDecoration(
-                                  color: COLOR_PURPLE,
-                                  borderRadius: BorderRadius.circular(20),
+      body: BlocListener<ArticlesBloc, ArticlesState>(
+        listener: (context, state) {
+          switch (state.status) {
+            case ArticleStatus.loading:
+              _appUtil.modalHudLoad(context);
+              break;
+            case ArticleStatus.success:
+              Navigator.pop(context);
+              Navigator.pushNamed(context, quiz_completed, arguments: state.overall);
+              break;
+            case ArticleStatus.failed:
+              Navigator.pop(context);
+              if(state.title != "") {
+                _appUtil.errorModal(context,
+                    title: state.title, message: state.message);
+              }
+              break;
+            default:
+              break;
+          }
+        },
+        child: SizedBox(
+            height: SizeConfig.screenHeight!,
+            width: SizeConfig.screenWidth!,
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Container(
+                      height: 150,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 40,
+                            padding: EdgeInsets.all(5),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 25),
+                            width: SizeConfig.screenWidth,
+                            decoration: BoxDecoration(
+                              color: COLOR_PINK,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Stack(
+                              children: [
+                                AnimatedContainer(
+                                  duration: Duration(milliseconds: 200),
+                                  width: SizeConfig.screenWidth! *
+                                      timePercentageLimit,
+                                  height: SizeConfig.screenHeight,
+                                  decoration: BoxDecoration(
+                                    color: COLOR_PURPLE,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                width: SizeConfig.screenWidth,
-                                height: SizeConfig.screenHeight,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                Container(
+                                  width: SizeConfig.screenWidth,
+                                  height: SizeConfig.screenHeight,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "${_timer!.tick.toString()} sec",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(color: Colors.white),
+                                      ),
+                                      Icon(Icons.access_time_outlined,
+                                          color: Colors.white)
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text.rich(
+                              TextSpan(
+                                  text: "Question ${pageIndex} /",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5!
+                                      .copyWith(
+                                        color: COLOR_PURPLE,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                   children: [
-                                    Text(
-                                      "${_timer!.tick.toString()} sec",
+                                    TextSpan(
+                                      text: " 5",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText1!
-                                          .copyWith(color: Colors.white),
-                                    ),
-                                    Icon(Icons.access_time_outlined,
-                                        color: Colors.white)
-                                  ],
-                                ),
-                              )
-                            ],
+                                          .copyWith(
+                                            color: COLOR_PURPLE,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    )
+                                  ]),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text.rich(
-                            TextSpan(
-                                text: "Question ${pageIndex} /",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline5!
-                                    .copyWith(
-                                      color: COLOR_PURPLE,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                children: [
-                                  TextSpan(
-                                    text: " 5",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(
-                                          color: COLOR_PURPLE,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                  )
-                                ]),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            "____________________________________________________________________________________",
-                            maxLines: 1,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(color: COLOR_PURPLE),
-                          ),
-                        )
-                      ],
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              "____________________________________________________________________________________",
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: COLOR_PURPLE),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: PageView(
-                      // physics: NeverScrollableScrollPhysics(),
-                      controller: controller,
-                      onPageChanged: (int index) {
-                        pageIndex = index + 1;
-                        _index = index;
-                        setState(() {});
-                      },
-                      children: questions.map((question) {
-                        int index = questions.indexOf(question);
-                        return _questionSection(question, index);
-                      }).toList(),
+                    Expanded(
+                      child: PageView(
+                        // physics: NeverScrollableScrollPhysics(),
+                        controller: controller,
+                        onPageChanged: (int index) {
+                          pageIndex = index + 1;
+                          _index = index;
+                          setState(() {});
+                        },
+                        children: questions.map((question) {
+                          int index = questions.indexOf(question);
+                          return _questionSection(question, index);
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                    height: 50,
-                    width: SizeConfig.screenWidth,
-                    child: AdsBannerWidget()),
-              )
-            ],
-          )),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                      height: 50,
+                      width: SizeConfig.screenWidth,
+                      child: AdsBannerWidget()),
+                )
+              ],
+            )),
+      ),
       floatingActionButton: (pageIndex == questions.length && result[_index].isNotEmpty)
           ? FloatingActionButton(
         onPressed: () {
@@ -233,7 +257,9 @@ class _QuizScreenState extends State<QuizScreen> {
         children: [
           Text(
             question.ask!,
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme.of(context).textTheme.headline5!.copyWith(
+              fontSize: SizeConfig.blockSizeVertical! * 2.3,
+            ),
           ),
           Spacer(),
           ...question.answers!.map((choice) {
@@ -241,13 +267,22 @@ class _QuizScreenState extends State<QuizScreen> {
             return _answerRadio(
               choice,
               onChanged: (val) {
-                result[_index] = {
-                  'answer': val,
-                  'question_id': choice.questionId,
-                  'answer_id': choice.id,
-                };
-                controller.animateToPage(_index + 1, duration: Duration(milliseconds: 500), curve: Curves.ease);
-                setState(() {});
+                _appUtil.confirmModal(
+                  context,
+                  title: "Are you sure?",
+                  message: "If you're sure in your answer \n${val}?",
+                  onPressed: () {
+                    result[_index] = {
+                      'answer': val,
+                      'question_id': choice.questionId,
+                      'answer_id': choice.id,
+                    };
+                    controller.animateToPage(_index + 1, duration: Duration(milliseconds: 500), curve: Curves.ease);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  cancelBtn: true,
+                );
               }
 
             );

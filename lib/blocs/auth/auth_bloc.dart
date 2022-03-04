@@ -3,12 +3,14 @@
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_state.dart';
 import 'package:rte_app/blocs/auth/auth_event.dart';
 import 'package:rte_app/blocs/auth/auth_state.dart';
 import 'package:rte_app/blocs/cookie/cookie_bloc.dart';
 import 'package:rte_app/blocs/cookie/cookie_event.dart';
 import 'package:rte_app/blocs/cookie/cookie_state.dart';
 import 'package:rte_app/main.dart';
+import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/user.dart';
 import 'package:rte_app/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +27,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLogout>(_onLogout);
     on<AuthUpdateUser>(_updateUser);
     on<AuthPersistUser>(_persistUser);
+    on<AuthViewUser>(_authViewedUser);
+    on<AuthViewAuthor>(_authViewedAuthor);
   }
 
   void _persistUser(AuthPersistUser event, Emitter<AuthState> emit) {
@@ -78,6 +82,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else {
       emit(state.copyWith(status: AuthStatus.failed, message: response.message));
     }
+  }
+
+  void _authViewedUser(AuthViewUser event, Emitter<AuthState> emit) async {
+    var response = await authService!.viewedUser(event.userId);
+    emit(state.copyWith(status: AuthStatus.loading));
+    if(!response.error!) {
+      User user = User.fromMap(response.collections!['user']);
+      List<Article> savedArticles = [];
+      response.collections!['saved_articles'].map((article) {
+        savedArticles.add(Article.fromMap(article['article']));
+      }).toList();
+      emit(state.copyWith(status: AuthStatus.success, viewedUser: user, viewedSavedArticles: savedArticles));
+    } else {
+      emit(state.copyWith(status: AuthStatus.failed, message: response.message));
+    }
+    emit(state.copyWith(status: AuthStatus.waiting));
+  }
+
+  void _authViewedAuthor(AuthViewAuthor event, Emitter<AuthState> emit) async {
+    var response = await authService!.viewedAuthor(event.authorId);
+    emit(state.copyWith(status: AuthStatus.loading));
+    if(!response.error!) {
+      User user = User.fromMap(response.collections!['author']);
+      emit(state.copyWith(viewedUser: user, status: AuthStatus.success));
+    } else {
+      emit(state.copyWith(status: AuthStatus.failed));
+    }
+    emit(state.copyWith(status: AuthStatus.waiting));
   }
 
   void _onLogout (
