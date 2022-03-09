@@ -196,4 +196,12 @@ class ScoreProcess extends ArticleEvent {
 
 }
 
+class GetArticleById extends ArticleEvent {
+  final int articleId;
+  const GetArticleById({this.articleId = 0});
+
+  @override
+  List<Object> get props => [articleId];
+}
+
 

@@ -107,7 +107,7 @@ class _MainLayoutState extends State<MainLayout> with WidgetsBindingObserver {
           children: [
             HomeScreen(),
             ProfileScreen(
-              user: user,
+              // user: user,
             ),
             SearchScreen(),
             ProfileSettingsScreen(user: user),

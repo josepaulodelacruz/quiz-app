@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/common/size_config.dart';
@@ -8,6 +9,7 @@ import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/screens/article/show_article_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BookWidget extends StatelessWidget {
   Article article;
@@ -20,7 +22,8 @@ class BookWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, view_article, arguments: article);
+        context.read<ArticlesBloc>().emit(context.read<ArticlesBloc>().state.copyWith(currentRead: article));
+        Navigator.pushNamed(context, view_article);
       },
       child: Container(
         margin: EdgeInsets.only(left: 20, bottom: 20),

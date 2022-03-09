@@ -99,6 +99,21 @@ class ArticleService extends ApiService {
     }
   }
 
+  Future<ArticleResponse> getArticleById(int id) async {
+    try {
+      var response = await get('/api/user/get-article/${id}');
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch (error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(message: error.toString(), error: true);
+    }
+  }
+
   Future<void> savedArticle (Article article) async {
     List<Article> articles = await getSavedUnfinishedArticles();
     var alreadyExist = articles.where((el) => el.articleTitle == article.articleTitle).toList();

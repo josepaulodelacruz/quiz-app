@@ -54,6 +54,7 @@ class _SplashScreenState extends State<SplashScreen>{
 
   @override
   void dispose() {
+    BlocProvider.of<AuthBloc>(context).close();
     super.dispose();
   }
 

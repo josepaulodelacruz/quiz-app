@@ -7,14 +7,17 @@ import 'package:rte_app/blocs/auth/auth_bloc.dart';
 import 'package:rte_app/blocs/cookie/cookie_bloc.dart';
 import 'package:rte_app/blocs/cookie/cookie_event.dart';
 import 'package:rte_app/blocs/counter_bloc.dart';
+import 'package:rte_app/blocs/search/search_bloc.dart';
 import 'package:rte_app/blocs/tags/tag_bloc.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/models/article.dart';
 import "package:rte_app/router.dart" as OnRouter;
+import 'package:rte_app/screens/websocket_screen.dart';
 import 'package:rte_app/services/ads_service.dart';
 import 'package:rte_app/services/article_service.dart';
 import 'package:rte_app/services/auth_service.dart';
+import 'package:rte_app/services/search_service.dart';
 import 'package:rte_app/services/tag_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
@@ -61,11 +64,15 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<AdsBloc>(
           create: (context) => AdsBloc(adsService: AdsService()),
         ),
+        BlocProvider<SearchBloc>(
+          create: (context) => SearchBloc(searchService: SearchService()),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: createTheme(context),
         title: "RTE",
+        // home: WebSocketScreen(),
         initialRoute: splash_screen,
         onGenerateRoute: OnRouter.PublicRouter.generateRoute,
       ),

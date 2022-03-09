@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +9,7 @@ import 'package:rte_app/blocs/ads/ads_bloc.dart';
 import 'package:rte_app/blocs/ads/ads_state.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
+import 'package:rte_app/blocs/auth/auth_event.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
@@ -15,6 +17,7 @@ import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/common/widgets/ads_widget.dart';
 import 'package:rte_app/common/widgets/claim_reward_widget.dart';
 import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
+import 'package:rte_app/common/widgets/util.dart';
 import 'package:rte_app/models/ads.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -258,6 +261,9 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
               style: TextStyle(height: 2),
               children: <TextSpan>[
                 TextSpan(
+                  recognizer: TapGestureRecognizer()..onTap = () {
+                    _viewAuthor();
+                  },
                   text: "${article.author} ",
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(
                         color: COLOR_PURPLE,
@@ -375,5 +381,13 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
     } else {
       Navigator.pop(context);
     }
+  }
+
+  void _viewAuthor () async {
+    // modalHudLoad(context);
+    context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
+    // await Future.delayed(Duration(seconds: 1));
+    // Navigator.pop(context);
+    // Navigator.pushNamed(context, profile_screen, arguments: true);
   }
 }

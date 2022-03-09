@@ -1,10 +1,27 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:rte_app/blocs/articles/articles_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_event.dart';
+import 'package:rte_app/blocs/articles/articles_state.dart';
+import 'package:rte_app/blocs/auth/auth_bloc.dart';
+import 'package:rte_app/blocs/auth/auth_event.dart';
+import 'package:rte_app/blocs/auth/auth_state.dart';
+import 'package:rte_app/blocs/search/search_bloc.dart';
+import 'package:rte_app/blocs/search/search_event.dart';
+import 'package:rte_app/blocs/search/search_state.dart';
 import 'package:rte_app/common/constants.dart';
+import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
+import 'package:rte_app/common/widgets/util.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/blocs/cookie/cookie_bloc.dart';
+import 'package:rte_app/models/article.dart';
+import 'package:rte_app/screens/search/widgets/search_card_article_widget.dart';
+import 'package:rte_app/screens/search/widgets/search_card_author_widget.dart';
+import 'package:rte_app/screens/search/widgets/search_card_user_widget.dart';
 import 'package:sensitive_http/http.dart' as http;
+import 'package:pusher_client/pusher_client.dart';
+import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -14,13 +31,68 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  // PusherClient pusher = PusherClient(
+  //     "local_rte_key",
+  //     PusherOptions(
+  //       host: '10.0.2.2',
+  //       wsPort: 6001,
+  //       encrypted: false,
+  //       auth: PusherAuth(
+  //           '${dev_endpoint}/api/broadcasting/auth',
+  //           headers: {
+  //             'Authorization': 'Bearer eyJpdiI6IlhETlFDek1GeWdDSGdOckxMS0tjMGc9PSIsInZhbHVlIjoiTDB1K0s4MjFkaXdFUG9pNUpnN3N1RzZPYWtWbW5QS1UrWWo2Y2MwRHEvN0xVNkdQczZGdkljTXVXTWNCVUxDSCIsIm1hYyI6IjI0NDZhODVjOTFmMGRmNTAyNzMzODRiNDk4MjU2YmFhODM5OGFmZjc2YWQyNjk2NDk5OWNjZTczZjMyZDgxYmEiLCJ0YWciOiIifQ==',
+  //           }
+  //       ),
+  //
+  //       // auth: PusherAuth(
+  //       //   '/api/broadcasting/auth',
+  //       //   headers: {
+  //       //     'Application': 'application/json',
+  //       //     'Cookie': "laravel_session=7vjDQ28uAvwIMAnhVjU5cprmsQJ7trXvafk9M03y",
+  //       //   }
+  //       // )
+  //     ), enableLogging: true, autoConnect: false);
+  // late Channel channel;
+  // late Channel privateChannel;
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
   }
+  //
+  // Future<void> socket() async {
+  //   try {
+  //     await pusher.connect();
+  //     channel = pusher.subscribe('home');
+  //     print('socket');
+  //     print(pusher.getSocketId());
+  //
+  //     channel.bind('App\\Events\\Test', (event) {
+  //       print('listening');
+  //       print(event!.data);
+  //     });
+  //
+  //     privateChannel = pusher.subscribe('private-App.User.1');
+  //     privateChannel.bind('App\\Events\\Word', (event) {
+  //       print('listening from private channel');
+  //       print(event!.data);
+  //     });
+  //
+  //
+  //     pusher.onConnectionError((error) {
+  //       print('error');
+  //       print(error!.message);
+  //     });
+  //
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -31,23 +103,76 @@ class _SearchScreenState extends State<SearchScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-          },
-          child: Icon(Icons.add),
-        ),
           appBar: AppBar(
             automaticallyImplyLeading: false,
             elevation: 0,
             backgroundColor: Colors.transparent,
             title: TextField(
               onChanged: (text) async  {
+                if(text.isNotEmpty) {
+                  if (_debounce?.isActive ?? false) _debounce?.cancel();
+                  _debounce = Timer(const Duration(milliseconds: 800), () {
+                    context.read<SearchBloc>().add(SearchQueryEvent(query: text));
+                  });
+                } else {
+                  context.read<SearchBloc>().add(SearchQueryEvent(query: text));
+                  _debounce?.cancel();
+                }
               },
             ),
           ),
-          body: ListView(
-            children: [],
-          )),
+          body: BlocBuilder<SearchBloc, SearchState>(
+            builder: (context, state) {
+              if(state.status == SearchStatus.waiting) {
+                return Center(child: Text(
+                  'Enter Article or Name',
+                  style: Theme.of(context).textTheme.headline6,
+                ));
+              } else if(state.status == SearchStatus.loading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state.status == SearchStatus.success) {
+                return ListView(
+                  children: [
+                    ...state.queries['users'].map((user) {
+                      return SearchCardUserWidget(
+                        result: user,
+                        onPressed: () async {
+                          context.read<AuthBloc>().add(AuthViewUser(userId: user['id']));
+                          modalHudLoad(context);
+                          await Future.delayed(Duration(milliseconds: 1000));
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, profile_screen, arguments: true);
+                        },
+                      );
+                    }).toList() ?? [],
+                    ...state.queries['articles'].map((article) {
+                      return  SearchCardArticleWidget(
+                        result: article,
+                        onPressed: () async {
+                          modalHudLoad(context);
+                          context.read<ArticlesBloc>().add(GetArticleById(articleId: article['id']));
+                          FocusScope.of(context).unfocus();
+                          await Future.delayed(Duration(milliseconds: 1000));
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, view_article);
+                        },
+                      );
+                    }).toList() ?? [],
+                    ...state.queries['authors'].map((author) {
+                      return ListTile(
+                        title: SearchCardAuthorWidget(result: author),
+                      );
+                    }).toList() ?? [],
+                  ],
+                );
+              } else {
+                return Center(child: Text('no search result'));
+              }
+            },
+          )
+      ),
     );
   }
 }

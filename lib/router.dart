@@ -45,9 +45,8 @@ class PublicRouter {
         List<Tag> tags = settings.arguments as List<Tag>;
         return MaterialPageRoute(builder: (_) => CategoryScreen(tags: tags));
       case view_article:
-        Article viewArticle = settings.arguments as Article;
         return MaterialPageRoute(
-            builder: (_) => ShowArticleScreen(article: viewArticle));
+            builder: (_) => ShowArticleScreen());
       case read_article:
         ScreenArguments arguments = settings.arguments as ScreenArguments;
         return CupertinoPageRoute(
@@ -64,8 +63,8 @@ class PublicRouter {
         List<Map<String, dynamic>> result = settings.arguments as List<Map<String, dynamic>>;
         return CupertinoPageRoute(builder: (_) => QuizCompletedScreen(result: result));
       case profile_screen:
-        User user = settings.arguments as User;
-        return MaterialPageRoute(builder: (_) => ProfileScreen(user: user));
+        bool isView = settings.arguments as bool;
+        return MaterialPageRoute(builder: (_) => ProfileScreen(isViewUser: isView));
       case profile_settings_screen:
         return MaterialPageRoute(builder: (_) => ProfileSettingsScreen());
       case saves_likes_screen:

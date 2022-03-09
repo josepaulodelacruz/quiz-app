@@ -24,6 +24,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     on<ArticleGetEvent>(_getArticles);
     on<ArticleGetContentEvent>(_articleGetContent);
     on<ArticleView>(_viewArticle);
+    on<GetArticleById>(_getArticleById);
     on<ArticleSortByCategories>(_sortArticles);
     on<ArticleSave>(_savedUnfinishedReadArticle);
     on<UnfinishedArticleRead>(_unfinished);
@@ -66,6 +67,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
   _viewArticle(ArticleView event, Emitter<ArticlesState> emit) async {
     await articleService.viewArticle(event);
+  }
+
+  _getArticleById(GetArticleById event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.getArticleById(event.articleId);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      Article article = Article.fromMap(response.collections![0]);
+      emit(state.copyWith(status: ArticleStatus.success, title: "", currentRead: article));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed));
+    }
   }
 
   _articleGetContent (ArticleGetContentEvent event, Emitter<ArticlesState> emit) async {
@@ -113,7 +125,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   _getUnfinishedReadArticles(_, Emitter<ArticlesState> emit) async {
     List<Article> unfinishedArticles =
         await articleService.getSavedUnfinishedArticles();
-    emit(state.copyWith(unfinishedReadArticles: unfinishedArticles, status: ArticleStatus.success, unfinishedReadArticle: Article.empty));
+    emit(state.copyWith(unfinishedReadArticles: unfinishedArticles, unfinishedReadArticle: Article.empty, title: "", message: ""));
   }
 
   _removeUnfinishedReadArticle(

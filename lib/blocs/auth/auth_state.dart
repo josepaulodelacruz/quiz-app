@@ -7,6 +7,7 @@ enum AuthStatus {
   waiting,
   loading,
   success,
+  viewUser,
   failed,
 }
 
