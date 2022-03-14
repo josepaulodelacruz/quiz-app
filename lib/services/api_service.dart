@@ -25,6 +25,8 @@ class ApiService {
       [Map<String, dynamic>? body]
       ) async {
     try {
+      print('resources');
+      print(resources);
       String uri = '$endpoint$resources';
 
       var headers = {

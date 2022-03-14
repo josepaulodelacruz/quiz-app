@@ -30,7 +30,7 @@ class _QuizScreenState extends State<QuizScreen> {
   int _index = 0;
   late List<Map<String, dynamic>> result;
   Timer? _timer;
-  int timeLimit = 60;
+  int timeLimit = 5;
   double timePercentageLimit = 0;
   final controller = PageController();
   late List<Question> questions;
@@ -40,8 +40,8 @@ class _QuizScreenState extends State<QuizScreen> {
     questions = BlocProvider.of<ArticlesBloc>(context).state.questions;
     result = List.generate(questions.length, (index) => {});
     _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      if (timer.tick > 60) {
-        _timer!.cancel();
+      if (timer.tick > timeLimit) {
+        _timesUpDialog();
       } else {
         double currentTime = timer.tick / timeLimit;
         timePercentageLimit = currentTime;
@@ -225,18 +225,7 @@ class _QuizScreenState extends State<QuizScreen> {
       floatingActionButton: (pageIndex == questions.length && result[_index].isNotEmpty)
           ? FloatingActionButton(
         onPressed: () {
-          _timer!.cancel();
-          context
-              .read<ArticlesBloc>()
-              .add(RemoveUnfinishedReadArticle(id: widget.article.id));
-          context
-            .read<ArticlesBloc>()
-            .add(ScoreProcess(
-              result: result,
-              questions: questions,
-              userId: BlocProvider.of<AuthBloc>(context).state.user!.id!,
-              articleId: widget.article.id!,
-          ));
+          _proceed();
           // Navigator.pushNamed(context, quiz_completed);
         },
         child: Icon(Icons.check),
@@ -319,5 +308,33 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
       ),
     );
+  }
+
+  void _timesUpDialog () async {
+    _timer?.cancel();
+    _appUtil.confirmModal(
+      context,
+      title: "Times up!",
+      message: "Sorry your time is up!.",
+      barrierDismissible: false,
+      onPressed: () {
+        _proceed();
+      }
+    );
+  }
+
+  void _proceed () async {
+    _timer!.cancel();
+    context
+        .read<ArticlesBloc>()
+        .add(RemoveUnfinishedReadArticle(id: widget.article.id));
+    context
+        .read<ArticlesBloc>()
+        .add(ScoreProcess(
+      result: result,
+      questions: questions,
+      userId: BlocProvider.of<AuthBloc>(context).state.user!.id!,
+      articleId: widget.article.id!,
+    ));
   }
 }

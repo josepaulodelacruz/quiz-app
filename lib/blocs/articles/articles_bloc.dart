@@ -10,6 +10,7 @@ import 'package:rte_app/main-dev.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/question.dart';
+import 'package:rte_app/models/violation.dart';
 import 'package:rte_app/screens/payments/payment_method_screen.dart';
 import 'package:rte_app/services/article_service.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
@@ -22,6 +23,9 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }) : super(ArticlesState.unknown()) {
     on<CurrentReadArticle>(_currentRead);
     on<ArticleGetEvent>(_getArticles);
+    on<ShowViolationList>(_showViolation);
+    on<GetViolations>(_getViolations);
+    on<ReportArticle>(_reportArticle);
     on<ArticleGetContentEvent>(_articleGetContent);
     on<ArticleView>(_viewArticle);
     on<GetArticleById>(_getArticleById);
@@ -46,6 +50,43 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
   _currentRead(CurrentReadArticle event, Emitter<ArticlesState> emit) async {
     emit(state.copyWith(currentRead: event.article));
+  }
+
+  _showViolation (ShowViolationList event, Emitter<ArticlesState> emit) async {
+    if(event.isShow) {
+      emit(state.copyWith(status: ArticleStatus.showViolationList));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.waiting));
+    }
+  }
+
+
+
+  _getViolations (GetViolations event, Emitter<ArticlesState> emit) async {
+    var response = await articleService.getViolations();
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      List<Violation> violations = response.collections!.map((violation) {
+        return Violation.fromMap(violation);
+      }).toList();
+      emit(state.copyWith(violations: violations, status: ArticleStatus.success, title: ""));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.success, title: "Something went wrong"));
+    }
+  }
+
+  _reportArticle(ReportArticle event, Emitter<ArticlesState> emit) async {
+    emit(state.copyWith(status: ArticleStatus.loading));
+    var response = await articleService.reportArticle(event);
+    if(!response.error) {
+      if(event.hide) {
+        emit(state.copyWith(status: ArticleStatus.hideArticle, title: ""));
+      }
+      emit(state.copyWith(status: ArticleStatus.success, title: ""));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    }
+    emit(state.copyWith(status: ArticleStatus.waiting));
   }
 
   _getArticles(ArticleGetEvent event, Emitter<ArticlesState> emit) async {
@@ -165,8 +206,13 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
       List<Article> getSavedArticles = response.collections!.map((collection) {
         return Article.fromMap(collection['article']);
       }).toList();
-      emit(state.copyWith(
-          status: ArticleStatus.success, getSavedArticles: getSavedArticles, message: response.message, title: ""));
+      if(!event.isViewSavedArticles) {
+        emit(state.copyWith(
+            status: ArticleStatus.owner, getSavedArticles: getSavedArticles, message: response.message, title: ""));
+      } else {
+        emit(state.copyWith(
+            status: ArticleStatus.viewUserSavedArticle, getUserSavedArticles: getSavedArticles, message: response.message, title: ""));
+      }
     } else {
       emit(state.copyWith(
           status: ArticleStatus.failed, message: response.message, title: "Failed to saved article"));

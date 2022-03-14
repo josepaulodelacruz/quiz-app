@@ -1,5 +1,7 @@
 
 import 'package:equatable/equatable.dart';
+import 'package:rte_app/blocs/articles/articles_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_state.dart';
 import 'package:rte_app/models/user.dart';
 
 abstract class AuthEvent extends Equatable {
@@ -79,8 +81,10 @@ class AuthViewUser extends AuthEvent {
 
 class AuthViewAuthor extends AuthEvent {
   final int authorId;
+  final ArticlesBloc? bloc;
+  final ArticleStatus? status;
 
-  const AuthViewAuthor({this.authorId = 0});
+  const AuthViewAuthor({this.authorId = 0, this.bloc, this.status});
 
   @override
   List<Object> get props => [authorId];

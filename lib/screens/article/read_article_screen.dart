@@ -20,6 +20,7 @@ import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
 import 'package:rte_app/common/widgets/util.dart';
 import 'package:rte_app/models/ads.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/screens/article/widgets/report_form_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -70,6 +71,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -104,6 +106,8 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
                       articleId: article.id,
                     ));
+              } else {
+                context.read<ArticlesBloc>().add(ShowViolationList(isShow: true));
               }
             },
             itemBuilder: (context) => [
@@ -146,8 +150,8 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                 value: 'Report',
                 child: TextButton.icon(
                     onPressed: null,
-                    icon: Icon(Icons.report),
-                    label: Text('Report')),
+                    icon: Icon(Icons.report, color: COLOR_PURPLE),
+                    label: Text('Report', style: TextStyle(color: COLOR_PURPLE))),
               ),
             ],
           )
@@ -178,6 +182,19 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                   _appUtil.errorModal(context,
                       title: 'Failed to Saved Article', message: state.message);
                 }
+                break;
+              case ArticleStatus.showViolationList:
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (_) =>
+                    ReportFormWidget(violations: state.violations, article: article),
+                );
+                break;
+              case ArticleStatus.hideArticle:
+                Navigator.pop(context);
+                Navigator.pop(context);
+                // Navigator.pushNamedAndRemoveUntil(context, 'main_layout', (route) => true);
                 break;
               default:
                 break;
@@ -385,7 +402,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
 
   void _viewAuthor () async {
     // modalHudLoad(context);
-    context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
+    // context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
     // await Future.delayed(Duration(seconds: 1));
     // Navigator.pop(context);
     // Navigator.pushNamed(context, profile_screen, arguments: true);

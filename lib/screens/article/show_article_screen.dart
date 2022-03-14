@@ -134,7 +134,8 @@ class ShowArticleScreen extends StatelessWidget {
                                 ),
                                 subtitle: InkWell(
                                   onTap: () async {
-                                    context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
+                                    print(article.author);
+                                    // context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
                                   },
                                   child: Text("Writer: ${article.author!}",
                                       style:
@@ -303,6 +304,7 @@ class ShowArticleScreen extends StatelessWidget {
                                   context.read<ArticlesBloc>().add(CurrentReadArticle(article: article));
                                   context.read<AdsBloc>().add(RandomGetAds());
                                   context.read<ArticlesBloc>().add(ArticleGetContentEvent(id: article.id!));
+                                  context.read<ArticlesBloc>().add(GetViolations());
                                   // Navigator.pushNamed(context, read_article, arguments: article);
                                 },
                                 child: Text(

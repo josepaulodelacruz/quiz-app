@@ -91,8 +91,10 @@ class AppUtil {
         Function? onPressed,
         bool cancelBtn = false ,
         String confirmText = "Yes",
+        bool barrierDismissible = true,
       }) async {
     showDialog(
+      barrierDismissible: barrierDismissible,
       context: context,
       builder: (_) => AlertDialog(
         title: Text(

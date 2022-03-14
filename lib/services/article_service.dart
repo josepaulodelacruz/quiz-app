@@ -48,6 +48,42 @@ class ArticleService extends ApiService {
   ArticleService ({String? token}) :
       super(endpoint: dev_endpoint, token: token);
 
+  Future<ArticleResponse> getViolations () async {
+    try {
+      var response = await get('/api/user/get-violations');
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch (error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      print('this is error');
+      print(error);
+      return ArticleResponse(message: error.toString(), error: true);
+    }
+  }
+
+  Future<ArticleResponse> reportArticle (ReportArticle event) async {
+    try {
+      var response = await post('/api/user/report-article', {
+        'article_id': event.id.toString(),
+        'violation_id': event.violationId.toString(),
+        'reason': event.reason,
+      });
+      return ArticleResponse.fromMap(response);
+    } on ApiResponseError catch (error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } catch (error) {
+      return ArticleResponse(message: error.toString(), error: true);
+    }
+  }
+
   Future<ArticleResponse> getVerifiedArticles () async {
     try {
       var response = await get('/api/user/get-articles');

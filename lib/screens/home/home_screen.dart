@@ -63,7 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: BlocBuilder<ArticlesBloc, ArticlesState>(
         builder: (context, state) {
           List<Tag> tags = BlocProvider.of<TagBloc>(context).state.selectedTags;
-          List<Article> articles = tags.length > 0 ? state.sortedArticles: state.articles;
+          List<Article> articles =
+              tags.length > 0 ? state.sortedArticles : state.articles;
           List<Article> unfinishedArticles = state.unfinishedReadArticles;
           return SafeArea(
             child: RefreshIndicator(
@@ -77,12 +78,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     HeaderSection(),
-                    if(unfinishedArticles.length > 0) ...[
-                      ContinueReadingSection(unfinishedReadArticles: unfinishedArticles),
+                    if (unfinishedArticles.length > 0) ...[
+                      ContinueReadingSection(
+                          unfinishedReadArticles: unfinishedArticles),
                     ],
                     CategorySection(),
                     _articleTrendingSection(state, articles),
-                    if(articles.length > 0) ...[
+                    if (articles.length > 0) ...[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -98,7 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           ...articles.map((article) {
-                            return Container(margin: EdgeInsets.symmetric(vertical: 5),
+                            return Container(
+                                margin: EdgeInsets.symmetric(vertical: 5),
                                 child: ArticleCardWidget(article: article));
                           }).toList(),
                           // ArticleCardWidget(),
@@ -115,13 +118,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _articleTrendingSection (state, articles) {
-    if(state.status == ArticleStatus.loading) {
+  Widget _articleTrendingSection(state, articles) {
+    if (state.status == ArticleStatus.loading) {
       return Padding(
-          padding: EdgeInsets.all(20),
-          child: LinearProgressIndicator()
-      );
-    } else if (state.status == ArticleStatus.success) {
+          padding: EdgeInsets.all(20), child: LinearProgressIndicator());
+    } else if (state.status == ArticleStatus.success ||
+        state.status == ArticleStatus.owner ||
+        state.status == ArticleStatus.viewUserSavedArticle ||
+        state.status == ArticleStatus.hideArticle ||
+        state.status == ArticleStatus.waiting
+    ) {
       return TrendingArticleSection(articles: articles);
     } else {
       return Padding(
@@ -129,8 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Text(
           state.message,
           style: Theme.of(context).textTheme.subtitle1!.copyWith(
-            color: COLOR_PURPLE,
-          ),
+                color: COLOR_PURPLE,
+              ),
         ),
       );
     }

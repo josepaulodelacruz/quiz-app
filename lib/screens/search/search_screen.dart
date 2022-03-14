@@ -113,9 +113,11 @@ class _SearchScreenState extends State<SearchScreen> {
                   if (_debounce?.isActive ?? false) _debounce?.cancel();
                   _debounce = Timer(const Duration(milliseconds: 800), () {
                     context.read<SearchBloc>().add(SearchQueryEvent(query: text));
+                    FocusScope.of(context).unfocus();
                   });
                 } else {
                   context.read<SearchBloc>().add(SearchQueryEvent(query: text));
+                  FocusScope.of(context).unfocus();
                   _debounce?.cancel();
                 }
               },
@@ -140,6 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         result: user,
                         onPressed: () async {
                           context.read<AuthBloc>().add(AuthViewUser(userId: user['id']));
+                          context.read<ArticlesBloc>().add(GetSavedArticles(userId: user['id'], isViewSavedArticles: true));
                           modalHudLoad(context);
                           await Future.delayed(Duration(milliseconds: 1000));
                           Navigator.pop(context);
@@ -161,8 +164,15 @@ class _SearchScreenState extends State<SearchScreen> {
                       );
                     }).toList() ?? [],
                     ...state.queries['authors'].map((author) {
-                      return ListTile(
-                        title: SearchCardAuthorWidget(result: author),
+                      return SearchCardAuthorWidget(
+                        result: author,
+                        onPressed: () async {
+                          // context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
+                          // modalHudLoad(context);
+                          // await Future.delayed(Duration(milliseconds: 1000));
+                          // Navigator.pop(context);
+                          // Navigator.pushNamed(context, profile_screen, arguments: true);
+                        },
                       );
                     }).toList() ?? [],
                   ],

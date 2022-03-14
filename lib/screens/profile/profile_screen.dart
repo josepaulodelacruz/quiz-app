@@ -82,7 +82,19 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     earnSection(context),
                     SizedBox(height: 20),
-                    // Expanded(child: savedArticleSection(context, state.getSavedArticles)),
+                    BlocBuilder<ArticlesBloc, ArticlesState>(
+                      builder: (context, articleState) {
+                        if(articleState.status == ArticleStatus.owner) {
+                          return Expanded(child: savedArticleSection(context, articleState.getSavedArticles, status: articleState.status));
+                        } else if(articleState.status == ArticleStatus.viewUserSavedArticle) {
+                          return Expanded(child: savedArticleSection(context, articleState.getUserSavedArticles, status: articleState.status));
+                        } else if(articleState.status == ArticleStatus.viewAuthorArticle) {
+                          ///bug here.
+                          return Text('Viewing author');
+                        }
+                        return SizedBox();
+                      }
+                    )
                   ],
                 ),
               );
@@ -145,7 +157,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget savedArticleSection (context, List<Article> articles) {
+  Widget savedArticleSection (context, List<Article> articles, {ArticleStatus? status}) {
     return Column(
       children: [
         ListTile(

@@ -132,8 +132,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       cancelBtn: true,
                       onPressed: () {
                         context.read<AuthBloc>().add(AuthLogout());
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pushNamedAndRemoveUntil(context, login_screen, (route) => true);
                       }
                     );
                   }

@@ -117,8 +117,9 @@ class SavedArticle extends ArticleEvent {
 
 class GetSavedArticles extends ArticleEvent {
   final int? userId;
+  final bool isViewSavedArticles;
 
-  const GetSavedArticles({this.userId});
+  const GetSavedArticles({this.userId, this.isViewSavedArticles = false});
 
   @override
   List<Object> get props => [];
@@ -202,6 +203,38 @@ class GetArticleById extends ArticleEvent {
 
   @override
   List<Object> get props => [articleId];
+}
+
+class ShowViolationList extends ArticleEvent {
+  final bool isShow;
+  const ShowViolationList({this.isShow = false});
+
+  @override
+  List<Object> get props => [isShow];
+}
+
+class GetViolations extends ArticleEvent {
+  const GetViolations();
+
+  @override
+  List<Object> get props => [];
+}
+
+class ReportArticle extends ArticleEvent {
+  final int id;
+  final int violationId;
+  final String reason;
+  final bool hide;
+
+  const ReportArticle({
+    this.id = 0,
+    this.violationId = 0,
+    this.reason = "",
+    this.hide = true,
+  });
+
+  @override
+  List<Object> get props => [id, violationId, reason];
 }
 
 

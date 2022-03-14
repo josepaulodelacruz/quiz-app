@@ -3,21 +3,29 @@
 import 'package:equatable/equatable.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/question.dart';
+import 'package:rte_app/models/violation.dart';
 
 enum ArticleStatus {
   waiting,
   loading,
   success,
+  owner,
+  viewUserSavedArticle,
+  viewAuthorArticle,
+  showViolationList,
   failed,
+  hideArticle,
 }
 
 class ArticlesState extends Equatable {
+  final List<Violation> violations;
   final List<Article> articles;
   final List<Article> sortedArticles;
   final Article unfinishedReadArticle;
   final Article currentRead;
   final List<Article> unfinishedReadArticles;
   final List<Article> getSavedArticles;
+  final List<Article> getUserSavedArticles;
   final List<Article> likesArticles;
   final List<Question> questions;
   final ArticleStatus status;
@@ -27,12 +35,14 @@ class ArticlesState extends Equatable {
   final String title;
 
   const ArticlesState._({
+    this.violations = const [],
     this.articles = const [],
     this.sortedArticles = const [],
     this.currentRead = Article.empty,
     this.unfinishedReadArticle = Article.empty,
     this.unfinishedReadArticles = const [],
     this.getSavedArticles = const [],
+    this.getUserSavedArticles = const [],
     this.likesArticles = const [],
     this.questions = const [],
     this.overall = const [],
@@ -45,12 +55,14 @@ class ArticlesState extends Equatable {
   const ArticlesState.unknown() : this._();
 
   ArticlesState copyWith({
+    List<Violation>? violations,
     List<Article>? articles,
     List<Article>? sortedArticles,
     Article? currentRead,
     Article? unfinishedReadArticle,
     List<Article>? unfinishedReadArticles,
     List<Article>? getSavedArticles,
+    List<Article>? getUserSavedArticles,
     List<Article>? likesArticles,
     List<Question>? questions,
     List<Map<String, dynamic>>? overall,
@@ -60,12 +72,14 @@ class ArticlesState extends Equatable {
     String? title,
   }) {
     return ArticlesState._(
+      violations: violations ?? this.violations,
       articles: articles ?? this.articles,
       sortedArticles: sortedArticles ?? this.sortedArticles,
       currentRead: currentRead ?? this.currentRead,
       unfinishedReadArticle: unfinishedReadArticle ?? this.unfinishedReadArticle,
       unfinishedReadArticles: unfinishedReadArticles ?? this.unfinishedReadArticles,
       getSavedArticles: getSavedArticles ?? this.getSavedArticles,
+      getUserSavedArticles: getUserSavedArticles ?? this.getUserSavedArticles,
       likesArticles: likesArticles ?? this.likesArticles,
       questions: questions ?? this.questions,
       overall: overall ?? this.overall,
@@ -77,6 +91,6 @@ class ArticlesState extends Equatable {
   }
 
   @override
-  List<Object> get props => [articles, sortedArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, likesArticles, overall, articleContent, status, message, title];
+  List<Object> get props => [violations, articles, sortedArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, getUserSavedArticles, likesArticles, overall, articleContent, status, message, title];
 
 }
