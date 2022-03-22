@@ -53,16 +53,15 @@ class ArticleCardWidget extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          // Chip(
-                          //   backgroundColor: COLOR_PURPLE,
-                          //   visualDensity: VisualDensity(
-                          //       horizontal: -4, vertical: -4),
-                          //   label: Text(
-                          //     // article.category!.name!,
-                          //     "testing",
-                          //     style: TextStyle(color: Colors.white),
-                          //   ),
-                          // ),
+                          Chip(
+                            backgroundColor: COLOR_PURPLE,
+                            visualDensity: VisualDensity(
+                                horizontal: -4, vertical: -4),
+                            label: Text(
+                              article.category!.name!,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                           // Chip(
                           //   backgroundColor: COLOR_PURPLE,
                           //   visualDensity: VisualDensity(

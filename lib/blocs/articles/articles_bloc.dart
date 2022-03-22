@@ -96,6 +96,8 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     var response = await articleService.getVerifiedArticles();
     emit(state.copyWith(status: ArticleStatus.loading));
     if (!response.error) {
+      print('response');
+      print(response.collections);
 
       response.collections!['verified_articles']['data'].map((article) {
         articles.add(Article.fromMap(article));
