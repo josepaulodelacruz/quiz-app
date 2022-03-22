@@ -108,6 +108,7 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                     ));
               } else {
                 context.read<ArticlesBloc>().add(ShowViolationList(isShow: true));
+                context.read<ArticlesBloc>().add(GetViolations());
               }
             },
             itemBuilder: (context) => [

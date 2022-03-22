@@ -52,6 +52,9 @@ class ArticleService extends ApiService {
   Future<ArticleResponse> getViolations () async {
     try {
       var response = await get('/api/user/get-violations');
+      response['body'] = {
+        'violations': response['body'],
+      };
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch (error) {
       return ArticleResponse(
@@ -72,6 +75,7 @@ class ArticleService extends ApiService {
         'article_id': event.id.toString(),
         'violation_id': event.violationId.toString(),
         'reason': event.reason,
+        'is_hide': (event.hide == true ? 1 : 0).toString(),
       });
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch (error) {

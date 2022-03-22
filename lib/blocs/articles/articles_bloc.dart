@@ -63,16 +63,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
 
   _getViolations (GetViolations event, Emitter<ArticlesState> emit) async {
-    // var response = await articleService.getViolations();
-    // emit(state.copyWith(status: ArticleStatus.loading));
-    // if(!response.error) {
-    //   List<Violation> violations = response.collections!.map((violation) {
-    //     return Violation.fromMap(violation);
-    //   }).toList();
-    //   emit(state.copyWith(violations: violations, status: ArticleStatus.success, title: ""));
-    // } else {
-    //   emit(state.copyWith(status: ArticleStatus.success, title: "Something went wrong"));
-    // }
+    var response = await articleService.getViolations();
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      List<Violation> violations = [];
+      response.collections!['violations'].map((violation) {
+        violations.add(Violation.fromMap(violation));
+      }).toList();
+      emit(state.copyWith(violations: violations, status: ArticleStatus.success, title: ""));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.success, title: "Something went wrong"));
+    }
   }
 
   _reportArticle(ReportArticle event, Emitter<ArticlesState> emit) async {
@@ -96,8 +97,6 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     var response = await articleService.getVerifiedArticles();
     emit(state.copyWith(status: ArticleStatus.loading));
     if (!response.error) {
-      print('response');
-      print(response.collections);
 
       response.collections!['verified_articles']['data'].map((article) {
         articles.add(Article.fromMap(article));
