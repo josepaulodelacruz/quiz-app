@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rte_app/blocs/tags/tag_bloc.dart';
+import 'package:rte_app/blocs/tags/tag_state.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/models/article.dart';
@@ -50,15 +53,16 @@ class ArticleCardWidget extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Chip(
-                            backgroundColor: COLOR_PURPLE,
-                            visualDensity: VisualDensity(
-                                horizontal: -4, vertical: -4),
-                            label: Text(
-                              article.category!.name!,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                          // Chip(
+                          //   backgroundColor: COLOR_PURPLE,
+                          //   visualDensity: VisualDensity(
+                          //       horizontal: -4, vertical: -4),
+                          //   label: Text(
+                          //     // article.category!.name!,
+                          //     "testing",
+                          //     style: TextStyle(color: Colors.white),
+                          //   ),
+                          // ),
                           // Chip(
                           //   backgroundColor: COLOR_PURPLE,
                           //   visualDensity: VisualDensity(

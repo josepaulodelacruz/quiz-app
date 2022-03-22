@@ -63,16 +63,16 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
 
   _getViolations (GetViolations event, Emitter<ArticlesState> emit) async {
-    var response = await articleService.getViolations();
-    emit(state.copyWith(status: ArticleStatus.loading));
-    if(!response.error) {
-      List<Violation> violations = response.collections!.map((violation) {
-        return Violation.fromMap(violation);
-      }).toList();
-      emit(state.copyWith(violations: violations, status: ArticleStatus.success, title: ""));
-    } else {
-      emit(state.copyWith(status: ArticleStatus.success, title: "Something went wrong"));
-    }
+    // var response = await articleService.getViolations();
+    // emit(state.copyWith(status: ArticleStatus.loading));
+    // if(!response.error) {
+    //   List<Violation> violations = response.collections!.map((violation) {
+    //     return Violation.fromMap(violation);
+    //   }).toList();
+    //   emit(state.copyWith(violations: violations, status: ArticleStatus.success, title: ""));
+    // } else {
+    //   emit(state.copyWith(status: ArticleStatus.success, title: "Something went wrong"));
+    // }
   }
 
   _reportArticle(ReportArticle event, Emitter<ArticlesState> emit) async {
@@ -90,15 +90,30 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _getArticles(ArticleGetEvent event, Emitter<ArticlesState> emit) async {
+    List<Article> articles = [];
+    List<Article> trendingArticles = [];
+    List<Article> latestArticle = [];
     var response = await articleService.getVerifiedArticles();
     emit(state.copyWith(status: ArticleStatus.loading));
     if (!response.error) {
-      List<Article> articles = response.collections!.map((article) {
-        return Article.fromMap(article);
+
+      response.collections!['verified_articles']['data'].map((article) {
+        articles.add(Article.fromMap(article));
       }).toList();
+
+      response.collections!['trending_articles'].map((article) {
+         trendingArticles.add(Article.fromMap(article));
+      });
+
+      response.collections!['latest_articles'].map((article) {
+        latestArticle.add(Article.fromMap(article));
+      }).toList();
+
       emit(state.copyWith(
           articles: articles,
           sortedArticles: articles,
+          trendingArticles: trendingArticles,
+          latestArticles: latestArticle,
           status: ArticleStatus.success));
     } else {
       emit(state.copyWith(
@@ -199,24 +214,24 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _getSavedArtlces(GetSavedArticles event, Emitter<ArticlesState> emit) async {
-    var response = await articleService.getSavedArticles(event);
-    emit(state.copyWith(status: ArticleStatus.loading));
-    await Future.delayed(Duration(seconds: 2));
-    if (!response.error) {
-      List<Article> getSavedArticles = response.collections!.map((collection) {
-        return Article.fromMap(collection['article']);
-      }).toList();
-      if(!event.isViewSavedArticles) {
-        emit(state.copyWith(
-            status: ArticleStatus.owner, getSavedArticles: getSavedArticles, message: response.message, title: ""));
-      } else {
-        emit(state.copyWith(
-            status: ArticleStatus.viewUserSavedArticle, getUserSavedArticles: getSavedArticles, message: response.message, title: ""));
-      }
-    } else {
-      emit(state.copyWith(
-          status: ArticleStatus.failed, message: response.message, title: "Failed to saved article"));
-    }
+    // var response = await articleService.getSavedArticles(event);
+    // emit(state.copyWith(status: ArticleStatus.loading));
+    // await Future.delayed(Duration(seconds: 2));
+    // if (!response.error) {
+    //   List<Article> getSavedArticles = response.collections!.map((collection) {
+    //     return Article.fromMap(collection['article']);
+    //   }).toList();
+    //   if(!event.isViewSavedArticles) {
+    //     emit(state.copyWith(
+    //         status: ArticleStatus.owner, getSavedArticles: getSavedArticles, message: response.message, title: ""));
+    //   } else {
+    //     emit(state.copyWith(
+    //         status: ArticleStatus.viewUserSavedArticle, getUserSavedArticles: getSavedArticles, message: response.message, title: ""));
+    //   }
+    // } else {
+    //   emit(state.copyWith(
+    //       status: ArticleStatus.failed, message: response.message, title: "Failed to saved article"));
+    // }
   }
 
   _deleteSavedArticles(
@@ -237,16 +252,16 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _getLikesArticles(GetLikesArticle event, Emitter<ArticlesState> emit) async {
-    var response = await articleService.getLikesOfArticle(event.userId);
-    emit(state.copyWith(status: ArticleStatus.loading));
-    if(!response.error) {
-      List<Article> likesArticles = response.collections!.map((collection) {
-        return Article.fromMap(collection['article']);
-      }).toList();
-      emit(state.copyWith(status: ArticleStatus.success, likesArticles: likesArticles));
-    } else {
-      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
-    }
+    // var response = await articleService.getLikesOfArticle(event.userId);
+    // emit(state.copyWith(status: ArticleStatus.loading));
+    // if(!response.error) {
+    //   List<Article> likesArticles = response.collections!.map((collection) {
+    //     return Article.fromMap(collection['article']);
+    //   }).toList();
+    //   emit(state.copyWith(status: ArticleStatus.success, likesArticles: likesArticles));
+    // } else {
+    //   emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    // }
   }
 
   _likeArticle(LikeArticle event, Emitter<ArticlesState> emit) async {
@@ -272,17 +287,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _getQuizArticle (GetQuizArticle event, Emitter<ArticlesState> emit) async {
-    var response = await articleService.getQuestions(event);
-    emit(state.copyWith(status: ArticleStatus.loading));
-    if(!response.error) {
-      List<Question> questions = response.collections!.map((question) {
-        return Question.fromMap(question);
-      }).toList();
-      emit(state.copyWith(status: ArticleStatus.success, title: "Question fetched!", message: response.message, questions: questions));
-    } else {
-      emit(state.copyWith(status: ArticleStatus.failed, title: ""));
-    }
-    emit(state.copyWith(status: ArticleStatus.waiting));
+    // var response = await articleService.getQuestions(event);
+    // emit(state.copyWith(status: ArticleStatus.loading));
+    // if(!response.error) {
+    //   List<Question> questions = response.collections!.map((question) {
+    //     return Question.fromMap(question);
+    //   }).toList();
+    //   emit(state.copyWith(status: ArticleStatus.success, title: "Question fetched!", message: response.message, questions: questions));
+    // } else {
+    //   emit(state.copyWith(status: ArticleStatus.failed, title: ""));
+    // }
+    // emit(state.copyWith(status: ArticleStatus.waiting));
   }
 
   _scoreProcess (ScoreProcess event, Emitter<ArticlesState> emit) async {

@@ -12,6 +12,7 @@ import 'package:rte_app/models/article.dart';
 import 'package:rte_app/screens/home/widgets/article_card_widget.dart';
 import 'package:rte_app/screens/home/widgets/category_section.dart';
 import 'package:rte_app/screens/home/widgets/continue_reading_section.dart';
+import 'package:rte_app/screens/home/widgets/get_article_section.dart';
 import 'package:rte_app/screens/home/widgets/header_section.dart';
 import 'package:rte_app/screens/home/widgets/trending_article_section.dart';
 
@@ -65,7 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
           List<Tag> tags = BlocProvider.of<TagBloc>(context).state.selectedTags;
           List<Article> articles =
               tags.length > 0 ? state.sortedArticles : state.articles;
+          List<Article> trendingArticles = state.trendingArticles;
           List<Article> unfinishedArticles = state.unfinishedReadArticles;
+          List<Article> latestArticles = state.latestArticles;
           return SafeArea(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -83,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           unfinishedReadArticles: unfinishedArticles),
                     ],
                     CategorySection(),
-                    _articleTrendingSection(state, articles),
-                    if (articles.length > 0) ...[
+                    _articleTrendingSection(state, articles, trendingArticles),
+                    if (latestArticles.length > 0) ...[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -99,10 +102,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style: TextStyle(color: COLOR_PURPLE)),
                             ),
                           ),
-                          ...articles.map((article) {
+                          ...latestArticles.map((latestArticle) {
+
                             return Container(
                                 margin: EdgeInsets.symmetric(vertical: 5),
-                                child: ArticleCardWidget(article: article));
+                                child: ArticleCardWidget(article: latestArticle));
                           }).toList(),
                           // ArticleCardWidget(),
                         ],
@@ -118,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _articleTrendingSection(state, articles) {
+  Widget _articleTrendingSection(state, articles, trendingArticles) {
     if (state.status == ArticleStatus.loading) {
       return Padding(
           padding: EdgeInsets.all(20), child: LinearProgressIndicator());
@@ -128,7 +132,14 @@ class _HomeScreenState extends State<HomeScreen> {
         state.status == ArticleStatus.hideArticle ||
         state.status == ArticleStatus.waiting
     ) {
-      return TrendingArticleSection(articles: articles);
+      return Column(
+        children: [
+          if(trendingArticles.isNotEmpty) ...[
+            TrendingArticleSection(articles: trendingArticles),
+          ],
+          GetArticleSection(articles: articles),
+        ],
+      );
     } else {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),

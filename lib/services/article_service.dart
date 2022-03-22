@@ -14,7 +14,8 @@ import 'package:rte_app/common/constants.dart';
 class ArticleResponse {
   String? message;
   int? status;
-  List<dynamic>? collections;
+  // List<dynamic>? collections;
+  Map<String, dynamic>? collections;
   bool error;
 
   ArticleResponse({

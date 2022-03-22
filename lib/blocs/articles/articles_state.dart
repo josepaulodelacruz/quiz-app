@@ -21,6 +21,8 @@ class ArticlesState extends Equatable {
   final List<Violation> violations;
   final List<Article> articles;
   final List<Article> sortedArticles;
+  final List<Article> trendingArticles;
+  final List<Article> latestArticles;
   final Article unfinishedReadArticle;
   final Article currentRead;
   final List<Article> unfinishedReadArticles;
@@ -38,6 +40,8 @@ class ArticlesState extends Equatable {
     this.violations = const [],
     this.articles = const [],
     this.sortedArticles = const [],
+    this.trendingArticles = const [],
+    this.latestArticles = const [],
     this.currentRead = Article.empty,
     this.unfinishedReadArticle = Article.empty,
     this.unfinishedReadArticles = const [],
@@ -58,6 +62,8 @@ class ArticlesState extends Equatable {
     List<Violation>? violations,
     List<Article>? articles,
     List<Article>? sortedArticles,
+    List<Article>? trendingArticles,
+    List<Article>? latestArticles,
     Article? currentRead,
     Article? unfinishedReadArticle,
     List<Article>? unfinishedReadArticles,
@@ -75,6 +81,8 @@ class ArticlesState extends Equatable {
       violations: violations ?? this.violations,
       articles: articles ?? this.articles,
       sortedArticles: sortedArticles ?? this.sortedArticles,
+      trendingArticles: trendingArticles ?? this.trendingArticles,
+      latestArticles: latestArticles ?? this.latestArticles,
       currentRead: currentRead ?? this.currentRead,
       unfinishedReadArticle: unfinishedReadArticle ?? this.unfinishedReadArticle,
       unfinishedReadArticles: unfinishedReadArticles ?? this.unfinishedReadArticles,
@@ -91,6 +99,6 @@ class ArticlesState extends Equatable {
   }
 
   @override
-  List<Object> get props => [violations, articles, sortedArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, getUserSavedArticles, likesArticles, overall, articleContent, status, message, title];
+  List<Object> get props => [violations, articles, sortedArticles, trendingArticles, latestArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, getUserSavedArticles, likesArticles, overall, articleContent, status, message, title];
 
 }
