@@ -50,11 +50,7 @@ dependencies:
   laravel_flutter_pusher: ^0.0.4
   laravel_echo: ^1.0.0-beta.1
   flutter_cache_manager: ^3.3.0
-#  video_player:
-#    git:
-#      url: https://github.com/sanekyy/plugins.git
-#      ref: caching
-#      path: packages/video_player/video_player
+
   sensitive_http:
     git:
       url: "https://github.com/jpeeicruz/http.git"
