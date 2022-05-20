@@ -1,7 +1,6 @@
-
-
 import 'package:equatable/equatable.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/pagination.dart';
 import 'package:rte_app/models/question.dart';
 import 'package:rte_app/models/violation.dart';
 
@@ -32,6 +31,7 @@ class ArticlesState extends Equatable {
   final List<Question> questions;
   final ArticleStatus status;
   final List<Map<String, dynamic>> overall;
+  final VerifiedArticlePagination verifiedArticlePagination;
   final String articleContent;
   final String message;
   final String title;
@@ -50,6 +50,7 @@ class ArticlesState extends Equatable {
     this.likesArticles = const [],
     this.questions = const [],
     this.overall = const [],
+    this.verifiedArticlePagination = VerifiedArticlePagination.empty,
     this.status = ArticleStatus.waiting,
     this.articleContent = "",
     this.message = "",
@@ -72,6 +73,7 @@ class ArticlesState extends Equatable {
     List<Article>? likesArticles,
     List<Question>? questions,
     List<Map<String, dynamic>>? overall,
+    VerifiedArticlePagination? verifiedArticlePagination,
     ArticleStatus? status,
     String? articleContent,
     String? message,
@@ -84,13 +86,17 @@ class ArticlesState extends Equatable {
       trendingArticles: trendingArticles ?? this.trendingArticles,
       latestArticles: latestArticles ?? this.latestArticles,
       currentRead: currentRead ?? this.currentRead,
-      unfinishedReadArticle: unfinishedReadArticle ?? this.unfinishedReadArticle,
-      unfinishedReadArticles: unfinishedReadArticles ?? this.unfinishedReadArticles,
+      unfinishedReadArticle:
+          unfinishedReadArticle ?? this.unfinishedReadArticle,
+      unfinishedReadArticles:
+          unfinishedReadArticles ?? this.unfinishedReadArticles,
       getSavedArticles: getSavedArticles ?? this.getSavedArticles,
       getUserSavedArticles: getUserSavedArticles ?? this.getUserSavedArticles,
       likesArticles: likesArticles ?? this.likesArticles,
       questions: questions ?? this.questions,
       overall: overall ?? this.overall,
+      verifiedArticlePagination:
+          verifiedArticlePagination ?? this.verifiedArticlePagination,
       status: status ?? this.status,
       articleContent: articleContent ?? this.articleContent,
       message: message ?? this.message,
@@ -99,6 +105,23 @@ class ArticlesState extends Equatable {
   }
 
   @override
-  List<Object> get props => [violations, articles, sortedArticles, trendingArticles, latestArticles, currentRead, unfinishedReadArticle, unfinishedReadArticles, getSavedArticles, getUserSavedArticles, likesArticles, overall, articleContent, status, message, title];
-
+  List<Object> get props => [
+        violations,
+        articles,
+        sortedArticles,
+        trendingArticles,
+        latestArticles,
+        currentRead,
+        unfinishedReadArticle,
+        unfinishedReadArticles,
+        getSavedArticles,
+        getUserSavedArticles,
+        likesArticles,
+        overall,
+        verifiedArticlePagination,
+        articleContent,
+        status,
+        message,
+        title
+      ];
 }

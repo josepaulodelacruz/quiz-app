@@ -9,6 +9,7 @@ import 'package:rte_app/blocs/tags/tag_bloc.dart';
 import 'package:rte_app/main-dev.dart';
 import 'package:rte_app/main.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/pagination.dart';
 import 'package:rte_app/models/question.dart';
 import 'package:rte_app/models/violation.dart';
 import 'package:rte_app/screens/payments/payment_method_screen.dart';
@@ -23,6 +24,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }) : super(ArticlesState.unknown()) {
     on<CurrentReadArticle>(_currentRead);
     on<ArticleGetEvent>(_getArticles);
+    on<VerifiedArticlesNextScroll>(_verifiedNextPage);
     on<ShowViolationList>(_showViolation);
     on<GetViolations>(_getViolations);
     on<ReportArticle>(_reportArticle);
@@ -98,6 +100,8 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     emit(state.copyWith(status: ArticleStatus.loading));
     if (!response.error) {
 
+      VerifiedArticlePagination verifiedArticlePagination = VerifiedArticlePagination.fromMap(response.collections!['verified_articles']);
+
       response.collections!['verified_articles']['data'].map((article) {
         articles.add(Article.fromMap(article));
       }).toList();
@@ -115,11 +119,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
           sortedArticles: articles,
           trendingArticles: trendingArticles,
           latestArticles: latestArticle,
-          status: ArticleStatus.success));
+          status: ArticleStatus.success,
+          verifiedArticlePagination: verifiedArticlePagination,
+      ));
     } else {
       emit(state.copyWith(
           status: ArticleStatus.failed, message: response.message));
     }
+  }
+
+  _verifiedNextPage (VerifiedArticlesNextScroll event, Emitter<ArticlesState> emit) {
+    print(event.verifiedArticlePagination);
   }
 
   _viewArticle(ArticleView event, Emitter<ArticlesState> emit) async {
@@ -215,24 +225,25 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _getSavedArtlces(GetSavedArticles event, Emitter<ArticlesState> emit) async {
-    // var response = await articleService.getSavedArticles(event);
-    // emit(state.copyWith(status: ArticleStatus.loading));
-    // await Future.delayed(Duration(seconds: 2));
-    // if (!response.error) {
-    //   List<Article> getSavedArticles = response.collections!.map((collection) {
-    //     return Article.fromMap(collection['article']);
-    //   }).toList();
-    //   if(!event.isViewSavedArticles) {
-    //     emit(state.copyWith(
-    //         status: ArticleStatus.owner, getSavedArticles: getSavedArticles, message: response.message, title: ""));
-    //   } else {
-    //     emit(state.copyWith(
-    //         status: ArticleStatus.viewUserSavedArticle, getUserSavedArticles: getSavedArticles, message: response.message, title: ""));
-    //   }
-    // } else {
-    //   emit(state.copyWith(
-    //       status: ArticleStatus.failed, message: response.message, title: "Failed to saved article"));
-    // }
+    var response = await articleService.getSavedArticles(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    await Future.delayed(Duration(seconds: 2));
+    if (!response.error) {
+      List<Article> getSavedArticles = [];
+      response.collections!['body'].map((collection) {
+        getSavedArticles.add(Article.fromMap(collection['article']));
+      }).toList();
+      if(!event.isViewSavedArticles) {
+        emit(state.copyWith(
+            status: ArticleStatus.owner, getSavedArticles: getSavedArticles, message: response.message, title: ""));
+      } else {
+        emit(state.copyWith(
+            status: ArticleStatus.viewUserSavedArticle, getUserSavedArticles: getSavedArticles, message: response.message, title: ""));
+      }
+    } else {
+      emit(state.copyWith(
+          status: ArticleStatus.failed, message: response.message, title: "Failed to saved article"));
+    }
   }
 
   _deleteSavedArticles(

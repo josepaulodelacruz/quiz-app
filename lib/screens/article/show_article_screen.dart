@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -134,8 +133,7 @@ class ShowArticleScreen extends StatelessWidget {
                                 ),
                                 subtitle: InkWell(
                                   onTap: () async {
-                                    print(article.author);
-                                    // context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
+                                    context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
                                   },
                                   child: Text("Writer: ${article.author!}",
                                       style:
@@ -149,7 +147,7 @@ class ShowArticleScreen extends StatelessWidget {
                                         Theme.of(context).textTheme.bodyText1!.copyWith(
                                               height: 3.5,
                                               color: COLOR_DARK_GRAY,
-                                            )),
+                                            ),),
                               ),
                               Html(
                                 data:

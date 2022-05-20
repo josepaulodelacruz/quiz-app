@@ -37,6 +37,8 @@ class ApiService {
         headers: headers,
       );
 
+      // print('show result ${result.body}');
+
       var response = jsonDecode(result.body);
 
       if(result.statusCode >= 200 && result.statusCode < 400) {
@@ -52,8 +54,6 @@ class ApiService {
         // return {'message': message};
       }
     } catch (e) {
-      print('api_service');
-      print(e);
       return {'code': 400, 'message': e};
     }
   }

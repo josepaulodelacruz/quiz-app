@@ -103,6 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _authViewedAuthor(AuthViewAuthor event, Emitter<AuthState> emit) async {
     var response = await authService!.viewedAuthor(event.authorId);
+    print('show author ${response.collections}');
     emit(state.copyWith(status: AuthStatus.loading));
     if(!response.error!) {
       User user = User.fromMap(response.collections!['author']);
@@ -110,6 +111,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else {
       emit(state.copyWith(status: AuthStatus.failed));
     }
+    print("show author details ${state.status}");
     emit(state.copyWith(status: AuthStatus.waiting));
   }
 

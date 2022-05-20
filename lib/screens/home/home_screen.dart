@@ -9,6 +9,7 @@ import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/pagination.dart';
 import 'package:rte_app/screens/home/widgets/article_card_widget.dart';
 import 'package:rte_app/screens/home/widgets/category_section.dart';
 import 'package:rte_app/screens/home/widgets/continue_reading_section.dart';
@@ -122,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _articleTrendingSection(state, articles, trendingArticles) {
+  Widget _articleTrendingSection(ArticlesState state, articles, trendingArticles) {
     if (state.status == ArticleStatus.loading) {
       return Padding(
           padding: EdgeInsets.all(20), child: LinearProgressIndicator());
@@ -137,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if(trendingArticles.isNotEmpty) ...[
             TrendingArticleSection(articles: trendingArticles),
           ],
-          GetArticleSection(articles: articles),
+          GetArticleSection(articles: articles, verifiedArticlePagination: state.verifiedArticlePagination),
         ],
       );
     } else {

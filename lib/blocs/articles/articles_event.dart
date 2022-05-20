@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/pagination.dart';
 import 'package:rte_app/models/question.dart';
 
 abstract class ArticleEvent extends Equatable {
@@ -235,6 +236,17 @@ class ReportArticle extends ArticleEvent {
 
   @override
   List<Object> get props => [id, violationId, reason];
+}
+
+class VerifiedArticlesNextScroll extends ArticleEvent {
+  final VerifiedArticlePagination verifiedArticlePagination;
+
+  const VerifiedArticlesNextScroll({
+    this.verifiedArticlePagination = VerifiedArticlePagination.empty,
+  });
+
+  @override
+  List<Object> get props => [];
 }
 
 

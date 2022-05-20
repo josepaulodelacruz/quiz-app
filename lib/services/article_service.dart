@@ -204,8 +204,13 @@ class ArticleService extends ApiService {
 
   Future<ArticleResponse> getSavedArticles(GetSavedArticles event) async {
     try {
-      var response = await get('/api/user/get-saved-article/${event.userId}');
-      return ArticleResponse.fromMap(response);
+      var response = await get('/api/user/get-saved-article');
+      return ArticleResponse(
+        message: response['message'],
+        status: response['status'],
+        collections: {"body": response['body']},
+        error: false,
+      );
     } on ApiResponseError catch(error) {
       return ArticleResponse(
         message: error.message,
