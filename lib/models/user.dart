@@ -12,6 +12,7 @@ class User {
   String? confirmPassword;
   String? token;
   List<Article>? articles;
+  String? profilePhoto;
 
   User({
     this.id,
@@ -23,6 +24,7 @@ class User {
     this.password,
     this.confirmPassword,
     this.token,
+    this.profilePhoto,
     this.articles = const [],
   });
 
@@ -43,6 +45,7 @@ class User {
     model.lastName = map['last_name'];
     model.middleName = map['middle_name'] ?? "";
     model.email = map['email_address'];
+    model.profilePhoto = map['profile_picture'];
     model.token = map['token'];
     return model;
   }

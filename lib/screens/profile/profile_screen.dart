@@ -51,12 +51,11 @@ class _ProfileScreenState extends State<ProfileScreen>{
                   radius: SizeConfig.blockSizeVertical! * 12,
                   backgroundColor: COLOR_PURPLE,
                   child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      widget.isViewUser ? author.profilePhoto! : user.profilePhoto!,
+                    ),
                     radius: SizeConfig.blockSizeVertical! * 11.5,
                     backgroundColor: Colors.white,
-                    child: CachedNetworkImage(
-                      imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
-                      fit: BoxFit.cover,
-                    ),
                   ),
                 )
             ),
