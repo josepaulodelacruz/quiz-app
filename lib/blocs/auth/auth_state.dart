@@ -8,6 +8,7 @@ enum AuthStatus {
   loading,
   success,
   viewUser,
+  viewAuthor,
   failed,
 }
 

@@ -1,4 +1,6 @@
 
+import 'package:rte_app/models/article.dart';
+
 class User {
   int? id;
   String? firstName;
@@ -9,6 +11,7 @@ class User {
   String? password;
   String? confirmPassword;
   String? token;
+  List<Article>? articles;
 
   User({
     this.id,
@@ -20,6 +23,7 @@ class User {
     this.password,
     this.confirmPassword,
     this.token,
+    this.articles = const [],
   });
 
   Map<String, dynamic> toMap() {

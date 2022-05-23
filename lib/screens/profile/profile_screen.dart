@@ -11,97 +11,110 @@ import 'package:rte_app/models/user.dart';
 import 'package:rte_app/screens/profile/widgets/saved_article_card_widget.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   bool isViewUser;
+
   ProfileScreen({Key? key, this.isViewUser = false}) : super(key: key);
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+
+class _ProfileScreenState extends State<ProfileScreen>{
+  late User author;
+  late User user;
+
+  @override
+  void initState() {
+    if(widget.isViewUser) {
+      author = context.read<AuthBloc>().state.viewedAuthor!;
+      return;
+    }
+
+    user = context.read<AuthBloc>().state.user!;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      body: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, authState) {
-            if(authState.status == AuthStatus.loading) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.only(top: 50, bottom: 25),
-                        child: CircleAvatar(
-                          radius: SizeConfig.blockSizeVertical! * 12,
-                          backgroundColor: COLOR_PURPLE,
-                          child: CircleAvatar(
-                            radius: SizeConfig.blockSizeVertical! * 11.5,
-                            backgroundColor: Colors.white,
-                            child: FlutterLogo(size: SizeConfig.blockSizeVertical! * 11.5),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+                padding: EdgeInsets.only(top: 50, bottom: 25),
+                child: CircleAvatar(
+                  radius: SizeConfig.blockSizeVertical! * 12,
+                  backgroundColor: COLOR_PURPLE,
+                  child: CircleAvatar(
+                    radius: SizeConfig.blockSizeVertical! * 11.5,
+                    backgroundColor: Colors.white,
+                    child: FlutterLogo(size: SizeConfig.blockSizeVertical! * 11.5),
+                  ),
+                )
+            ),
+            if(widget.isViewUser) ...[
+              Text(
+                "${author.firstName} ${author.lastName}",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                  color: COLOR_PURPLE,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ] else ...[
+              Text(
+                "${user.firstName} ${user.lastName}",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                  color: COLOR_PURPLE,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+            SizedBox(height: 20),
+            Align(
+              alignment: Alignment.center,
+              child: Text.rich(
+                  TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Philippines ",
+                          style: Theme.of(context).textTheme.headline4!.copyWith(
+                              color: COLOR_PURPLE
+                          ),
+                        ),
+                        TextSpan(
+                          text: "${DateTime.now().hour}:${DateTime.now().minute} ${DateTime.now().isUtc ? "AM": "PM"}",
+                          style: Theme.of(context).textTheme.headline4!.copyWith(
+                              color: Colors.grey
                           ),
                         )
-                    ),
-                    if(isViewUser) ...[
-                      Text(
-                        "${authState.viewedUser!.firstName} ${authState.viewedUser!.lastName}",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline4!.copyWith(
-                          color: COLOR_PURPLE,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ] else ...[
-                      Text(
-                        "${authState.user!.firstName} ${authState.user!.lastName}",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline4!.copyWith(
-                          color: COLOR_PURPLE,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                    SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text.rich(
-                          TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Philippines ",
-                                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                                      color: COLOR_PURPLE
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: "${DateTime.now().hour}:${DateTime.now().minute} ${DateTime.now().isUtc ? "AM": "PM"}",
-                                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                                      color: Colors.grey
-                                  ),
-                                )
-                              ]
-                          )
-                      ),
-                    ),
-                    earnSection(context),
-                    SizedBox(height: 20),
-                    BlocBuilder<ArticlesBloc, ArticlesState>(
-                      builder: (context, articleState) {
-                        if(articleState.status == ArticleStatus.owner) {
-                          return Expanded(child: savedArticleSection(context, articleState.getSavedArticles, status: articleState.status));
-                        } else if(articleState.status == ArticleStatus.viewUserSavedArticle) {
-                          return Expanded(child: savedArticleSection(context, articleState.getUserSavedArticles, status: articleState.status));
-                        } else if(articleState.status == ArticleStatus.viewAuthorArticle) {
-                          ///bug here.
-                          return Text('Viewing author');
-                        }
-                        return SizedBox();
-                      }
-                    )
-                  ],
-                ),
-              );
-            }
-          }
-        )
-      );
+                      ]
+                  )
+              ),
+            ),
+            earnSection(context),
+            SizedBox(height: 20),
+            if(widget.isViewUser) ...[
+              Expanded(child: savedArticleSection(context, author.articles!)),
+            ] else ...[
+              BlocBuilder<ArticlesBloc, ArticlesState>(
+                  builder: (context, articleState) {
+                    if(!widget.isViewUser) {
+                      return Expanded(child: savedArticleSection(context, articleState.getSavedArticles, status: articleState.status));
+                    }
+                    return SizedBox();
+                  }
+              )
+            ],
+          ],
+        ),
+      )
+    );
   }
 
   Widget earnSection(BuildContext context) {
@@ -158,6 +171,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget savedArticleSection (context, List<Article> articles, {ArticleStatus? status}) {
+    print('show articles ${articles.length}');
     return Column(
       children: [
         ListTile(
@@ -165,7 +179,7 @@ class ProfileScreen extends StatelessWidget {
             Navigator.pushNamed(context, saved_article_screen);
           },
           title: Text(
-            "Saved Article",
+            widget.isViewUser ? "Written Articles" : "Saved Article",
             style: Theme.of(context).textTheme.headline6!.copyWith(
               fontWeight: FontWeight.w500,
             )
@@ -177,13 +191,13 @@ class ProfileScreen extends StatelessWidget {
         ),
         Expanded(
           flex: 1,
-          child: Container(
+          child: SizedBox(
             width: SizeConfig.screenWidth,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   ...articles.map((article) {
                     return SavedArticleCardWidget(article: article);
                   }).toList()

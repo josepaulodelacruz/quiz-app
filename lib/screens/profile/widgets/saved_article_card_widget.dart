@@ -17,7 +17,7 @@ class SavedArticleCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: SizeConfig.screenHeight,
       width: 150,
       child: GestureDetector(

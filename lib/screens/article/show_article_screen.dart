@@ -63,7 +63,7 @@ class ShowArticleScreen extends StatelessWidget {
               Navigator.pop(context);
             } else if(state.status == AuthStatus.failed) {
               Navigator.pop(context);
-            } else if(state.status == AuthStatus.viewUser) {
+            } else if(state.status == AuthStatus.viewAuthor) {
               Navigator.pop(context);
               Navigator.pushNamed(context, profile_screen, arguments: true);
             }
