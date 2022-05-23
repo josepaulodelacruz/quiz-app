@@ -3,6 +3,7 @@ import 'package:rte_app/blocs/ads/ads_bloc.dart';
 import 'package:rte_app/blocs/ads/ads_event.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
+import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/widgets/ads_banner_widget.dart';
 import 'package:rte_app/common/widgets/primary_button_widget.dart';
 import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
@@ -17,7 +18,11 @@ class QuizCompletedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: TransparentAppBarWidget(),
+      appBar: TransparentAppBarWidget(
+        onPressed: () {
+          Navigator.pushNamed(context, main_layout);
+        },
+      ),
       body: SizedBox(
         height: SizeConfig.screenHeight!,
         width: SizeConfig.screenWidth!,
@@ -33,7 +38,7 @@ class QuizCompletedScreen extends StatelessWidget {
                   child: PrimaryButtonWidget(
                     onPressed: () {
                       context.read<AdsBloc>().add(ClearAds());
-                      Navigator.pushNamedAndRemoveUntil(context, 'main_layout', (route) => false);
+                      Navigator.pushNamed(context, main_layout);
                     },
                     color: COLOR_PINK,
                     child: Text(
@@ -52,7 +57,7 @@ class QuizCompletedScreen extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: SizedBox(height: 50, child: AdsBannerWidget()),
+              child: SizedBox(height: 50, width: SizeConfig.screenWidth, child: AdsBannerWidget()),
             )
           ],
         )

@@ -30,7 +30,7 @@ class _QuizScreenState extends State<QuizScreen> {
   int _index = 0;
   late List<Map<String, dynamic>> result;
   Timer? _timer;
-  int timeLimit = 5;
+  int timeLimit = 120;
   double timePercentageLimit = 0;
   final controller = PageController();
   late List<Question> questions;
@@ -106,7 +106,7 @@ class _QuizScreenState extends State<QuizScreen> {
               children: [
                 Column(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 150,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +133,7 @@ class _QuizScreenState extends State<QuizScreen> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                Container(
+                                SizedBox(
                                   width: SizeConfig.screenWidth,
                                   height: SizeConfig.screenHeight,
                                   child: Row(

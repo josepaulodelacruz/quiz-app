@@ -8,6 +8,8 @@ const launch_screen = "/launch";
 const login_screen = "/login";
 const registration_screen = "/registration";
 
+const main_layout = '/main';
+
 const home_screen = '/home';
 const categories_screen = '/categories';
 
