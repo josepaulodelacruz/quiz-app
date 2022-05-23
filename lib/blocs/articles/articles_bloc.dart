@@ -299,17 +299,18 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _getQuizArticle (GetQuizArticle event, Emitter<ArticlesState> emit) async {
-    // var response = await articleService.getQuestions(event);
-    // emit(state.copyWith(status: ArticleStatus.loading));
-    // if(!response.error) {
-    //   List<Question> questions = response.collections!.map((question) {
-    //     return Question.fromMap(question);
-    //   }).toList();
-    //   emit(state.copyWith(status: ArticleStatus.success, title: "Question fetched!", message: response.message, questions: questions));
-    // } else {
-    //   emit(state.copyWith(status: ArticleStatus.failed, title: ""));
-    // }
-    // emit(state.copyWith(status: ArticleStatus.waiting));
+    var response = await articleService.getQuestions(event);
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      List<Question> questions = [];
+      response.collections!['body'].map((question) {
+        return questions.add(Question.fromMap(question));
+      }).toList();
+      emit(state.copyWith(status: ArticleStatus.success, title: "Question fetched!", message: response.message, questions: questions));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, title: ""));
+    }
+    emit(state.copyWith(status: ArticleStatus.waiting));
   }
 
   _scoreProcess (ScoreProcess event, Emitter<ArticlesState> emit) async {

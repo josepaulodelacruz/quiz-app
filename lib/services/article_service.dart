@@ -320,7 +320,13 @@ class ArticleService extends ApiService {
       var response = await post('/api/user/questions', {
         'article_id': event.articleId.toString(),
       });
-      return ArticleResponse.fromMap(response);
+      // return ArticleResponse.fromMap(response);
+      return ArticleResponse(
+        message: response['message'],
+        status: response['status'],
+        error: false,
+        collections: {'body': response['body']},
+      );
     } on ApiResponseError catch(error) {
       return ArticleResponse(
         message: error.message,

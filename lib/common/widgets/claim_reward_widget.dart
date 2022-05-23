@@ -40,7 +40,6 @@ class _ClaimRewardWidgetState extends State<ClaimRewardWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(_controller.value.position);
     return AlertDialog(
       title: Text('Ads'),
       content: Column(

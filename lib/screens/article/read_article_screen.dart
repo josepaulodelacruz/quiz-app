@@ -402,10 +402,8 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
   }
 
   void _viewAuthor () async {
-    // modalHudLoad(context);
-    // context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
-    // await Future.delayed(Duration(seconds: 1));
-    // Navigator.pop(context);
-    // Navigator.pushNamed(context, profile_screen, arguments: true);
+    modalHudLoad(context);
+    context.read<AuthBloc>().add(AuthViewAuthor(authorId: article.authorId!));
+    Navigator.pop(context);
   }
 }

@@ -35,6 +35,7 @@ class User {
       'last_name': lastName,
       'middle_name': middleName ?? "",
       'email_address': email,
+      'profile_picture': profilePhoto ?? "",
     };
   }
 
