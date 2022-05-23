@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
@@ -52,7 +53,10 @@ class _ProfileScreenState extends State<ProfileScreen>{
                   child: CircleAvatar(
                     radius: SizeConfig.blockSizeVertical! * 11.5,
                     backgroundColor: Colors.white,
-                    child: FlutterLogo(size: SizeConfig.blockSizeVertical! * 11.5),
+                    child: CachedNetworkImage(
+                      imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 )
             ),
@@ -171,7 +175,6 @@ class _ProfileScreenState extends State<ProfileScreen>{
   }
 
   Widget savedArticleSection (context, List<Article> articles, {ArticleStatus? status}) {
-    print('show articles ${articles.length}');
     return Column(
       children: [
         ListTile(

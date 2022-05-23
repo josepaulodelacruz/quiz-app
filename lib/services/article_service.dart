@@ -109,7 +109,12 @@ class ArticleService extends ApiService {
   Future<ArticleResponse> articleGetContent(ArticleGetContentEvent event) async {
     try {
       var response = await get('/api/user/get-article-content/${event.id}');
-      return ArticleResponse.fromMap(response);
+      return ArticleResponse(
+        message: response['message'],
+        status: response['status'],
+        collections: response['body'][0],
+        error: false,
+      );
     } on ApiResponseError catch (error) {
       return ArticleResponse(
         message: error.message,
@@ -123,7 +128,6 @@ class ArticleService extends ApiService {
 
   Future<ArticleResponse> viewArticle(ArticleView details) async {
     try {
-      var token = getIt<CookieBloc>().state.cookie!.session;
       var response = await post('/api/user/article-view-count', {
         'user_id': details.userId.toString(),
         'article_id': details.articleId.toString(),

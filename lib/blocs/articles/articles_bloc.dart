@@ -151,7 +151,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     var response = await articleService.articleGetContent(event);
     emit(state.copyWith(status: ArticleStatus.loading));
     if(!response.error) {
-      emit(state.copyWith(status: ArticleStatus.success, title: "", articleContent: response.collections![0]['article_content']));
+      emit(state.copyWith(status: ArticleStatus.success, title: "", articleContent: response.collections!['article_content']));
     } else {
       emit(state.copyWith(status: ArticleStatus.loading, title: ""));
     }
