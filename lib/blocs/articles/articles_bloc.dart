@@ -209,13 +209,17 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     emit(state.copyWith(status: ArticleStatus.loading));
     await Future.delayed(Duration(seconds: 2));
     if (!response.error) {
-      List<Article> articles = state.getSavedArticles.toList();
-      articles.add(event.article);
+      List<Article> articles = state.articles;
+      List<Article> savedArticles= state.getSavedArticles.toList();
+      savedArticles.add(event.article);
+      int index = articles.indexWhere((el) => el.id == event.article.id);
+      articles[index].copyWith(isSaved: true, saves: articles[index].saves! + 1);
       emit(state.copyWith(
           status: ArticleStatus.success,
           title: "Successfully Saved article!",
           message: response.message,
-          getSavedArticles: articles,
+          articles: articles,
+          getSavedArticles: savedArticles,
           currentRead: state.currentRead.copyWith(isSaved: true),
       ));
     } else {

@@ -84,11 +84,24 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
           PopupMenuButton(
             onSelected: (selected) {
               if (selected == 'Save') {
-                context.read<ArticlesBloc>().add(SavedArticle(
-                      userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                      articleId: article.id,
-                      article: article,
-                    ));
+                final bloc = context.read<ArticlesBloc>();
+                ArticlesState state = bloc.state;
+                List<Article> articles = state.articles;
+                int index = articles.indexWhere((element) => element.id == article.id);
+                Article a = state.articles[index];
+                a.copyWith(isSaved: true);
+                print(a.isSaved);
+                // state.articles.removeAt(index);
+                // bloc.emit(state.copyWith(articles: ));
+                setState(() {});
+                // Navigator.pop(context);
+                // Navigator.pop(context);
+
+                // context.read<ArticlesBloc>().add(SavedArticle(
+                //       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                //       articleId: article.id,
+                //       article: article,
+                //     ));
               } else if (selected == 'Saved') {
                 context.read<ArticlesBloc>().add(DeletedSavedArticles(
                       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
@@ -126,27 +139,29 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                       child: TextButton.icon(
                           onPressed: null,
                           icon: Icon(Icons.check, color: COLOR_PURPLE),
-                          label: Text('Saved',
+                          label: Text('Article Saved',
                               style: TextStyle(color: COLOR_PURPLE))),
                     ),
-              !article.isLike!
-                  ? PopupMenuItem(
-                      value: 'Like',
-                      child: TextButton.icon(
-                          onPressed: null,
-                          icon:
-                              Icon(Icons.favorite_border, color: COLOR_PURPLE),
-                          label: Text('Like',
-                              style: TextStyle(color: COLOR_PURPLE))),
-                    )
-                  : PopupMenuItem(
-                      value: 'Unlike',
-                      child: TextButton.icon(
-                          onPressed: null,
-                          icon: Icon(Icons.favorite, color: COLOR_PURPLE),
-                          label: Text('Unlike',
-                              style: TextStyle(color: COLOR_PURPLE))),
-                    ),
+              if(!widget.isViewedSavedArticle) ...[
+                !article.isLike!
+                    ? PopupMenuItem(
+                  value: 'Like',
+                  child: TextButton.icon(
+                      onPressed: null,
+                      icon:
+                      Icon(Icons.favorite_border, color: COLOR_PURPLE),
+                      label: Text('Like',
+                          style: TextStyle(color: COLOR_PURPLE))),
+                )
+                    : PopupMenuItem(
+                  value: 'Unlike',
+                  child: TextButton.icon(
+                      onPressed: null,
+                      icon: Icon(Icons.favorite, color: COLOR_PURPLE),
+                      label: Text('Unlike',
+                          style: TextStyle(color: COLOR_PURPLE))),
+                ),
+              ],
               PopupMenuItem(
                 value: 'Report',
                 child: TextButton.icon(

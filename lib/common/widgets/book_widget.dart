@@ -22,6 +22,7 @@ class BookWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        print(article.isSaved);
         context.read<ArticlesBloc>().emit(context.read<ArticlesBloc>().state.copyWith(currentRead: article));
         Navigator.pushNamed(context, view_article);
       },
@@ -61,7 +62,7 @@ class BookWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "By: ${article.author}",
+                    "By: ${article.author} | isSaved: ${article.isSaved}",
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.8),
                   ),
                 ],
