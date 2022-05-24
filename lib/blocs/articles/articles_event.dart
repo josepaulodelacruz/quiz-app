@@ -129,12 +129,12 @@ class GetSavedArticles extends ArticleEvent {
 class DeletedSavedArticles extends ArticleEvent {
   final int? userId;
   final int? articleId;
-  final Article? article;
+  final Article article;
 
   const DeletedSavedArticles({
     this.userId,
     this.articleId,
-    this.article,
+    this.article = Article.empty,
   });
 
   @override

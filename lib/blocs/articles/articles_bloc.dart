@@ -256,7 +256,10 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     if (!response.error) {
       List<Article> getSavedArticles = state.getSavedArticles;
       getSavedArticles.removeWhere((element) => element.id == event.articleId);
+      int index = state.articles.indexWhere((element) => element.id == event.articleId);
+      state.articles[index] = event.article;
       emit(state.copyWith(
+          articles: state.articles,
           getSavedArticles: getSavedArticles,
           currentRead: event.article,
           status: ArticleStatus.success, title: "", message: ""));
