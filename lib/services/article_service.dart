@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:localstore/localstore.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
@@ -99,6 +100,8 @@ class ArticleService extends ApiService {
         status: 400,
         error: true,
       );
+    } on SocketException catch(error) {
+      return ArticleResponse(message: error.toString(), error: true);
     } catch (error) {
       print('this is error');
       print(error);
