@@ -209,16 +209,15 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     emit(state.copyWith(status: ArticleStatus.loading));
     await Future.delayed(Duration(seconds: 2));
     if (!response.error) {
-      List<Article> articles = state.articles;
       List<Article> savedArticles= state.getSavedArticles.toList();
       savedArticles.add(event.article);
-      int index = articles.indexWhere((el) => el.id == event.article.id);
-      articles[index].copyWith(isSaved: true, saves: articles[index].saves! + 1);
+      int index = state.articles.indexWhere((el) => el.id == event.article.id);
+      state.articles[index] = event.article;
       emit(state.copyWith(
           status: ArticleStatus.success,
           title: "Successfully Saved article!",
           message: response.message,
-          articles: articles,
+          articles: state.articles,
           getSavedArticles: savedArticles,
           currentRead: state.currentRead.copyWith(isSaved: true),
       ));
@@ -255,11 +254,11 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     var response = await articleService.deleteSavedArticles(event);
     emit(state.copyWith(status: ArticleStatus.loading));
     if (!response.error) {
-      List<Article> articles = state.getSavedArticles;
-      articles.removeWhere((element) => element.id == event.articleId);
+      List<Article> getSavedArticles = state.getSavedArticles;
+      getSavedArticles.removeWhere((element) => element.id == event.articleId);
       emit(state.copyWith(
-          getSavedArticles: articles,
-          currentRead: state.currentRead.copyWith(isSaved: false),
+          getSavedArticles: getSavedArticles,
+          currentRead: event.article,
           status: ArticleStatus.success, title: "", message: ""));
     } else {
       emit(state.copyWith(

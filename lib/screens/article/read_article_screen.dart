@@ -84,25 +84,16 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
           PopupMenuButton(
             onSelected: (selected) {
               if (selected == 'Save') {
-                final bloc = context.read<ArticlesBloc>();
-                ArticlesState state = bloc.state;
-                List<Article> articles = state.articles;
-                int index = articles.indexWhere((element) => element.id == article.id);
-                Article a = state.articles[index];
-                a.copyWith(isSaved: true);
-                print(a.isSaved);
-                // state.articles.removeAt(index);
-                // bloc.emit(state.copyWith(articles: ));
+                article = article.copyWith(isSaved: true, saves: article.saves! + 1);
                 setState(() {});
-                // Navigator.pop(context);
-                // Navigator.pop(context);
-
-                // context.read<ArticlesBloc>().add(SavedArticle(
-                //       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
-                //       articleId: article.id,
-                //       article: article,
-                //     ));
+                context.read<ArticlesBloc>().add(SavedArticle(
+                      userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
+                      articleId: article.id,
+                      article: article,
+                    ));
               } else if (selected == 'Saved') {
+                article = article.copyWith(isSaved: false, saves: article.saves! - 1);
+                setState(() {});
                 context.read<ArticlesBloc>().add(DeletedSavedArticles(
                       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
                       articleId: article.id,

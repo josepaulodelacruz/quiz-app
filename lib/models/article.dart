@@ -2,36 +2,36 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 class Article extends Equatable {
-  final int id;
-  final int authorId;
-  final String author;
-  final String articleTitle;
-  final String coverPhoto;
-  final List<Tag> tags;
-  final List<dynamic> viewedUsers;
-  final Category category;
-  final String articleContent;
-  final String date;
-  final bool isLike;
-  final bool isSaved;
-  final int views;
-  final int saves;
-  final int likes;
+  final int? id;
+  final int? authorId;
+  final String? author;
+  final String? articleTitle;
+  final String? coverPhoto;
+  final List<Tag>? tags;
+  final List<dynamic>? viewedUsers;
+  final Category? category;
+  final String? articleContent;
+  final String? date;
+  final bool? isLike;
+  final bool? isSaved;
+  final int? views;
+  final int? saves;
+  final int? likes;
 
   const Article({
-    this.id = 0,
-    this.authorId = 0,
-    this.author = "",
-    this.articleTitle = "",
-    this.coverPhoto = "",
-    this.tags = const <Tag>[],
-    this.viewedUsers = const [],
-    this.articleContent = "",
-    this.date = "",
-    this.views = 0,
-    this.saves = 0,
-    this.likes = 0,
-    this.category = Category.empty,
+    this.id,
+    this.authorId,
+    this.author,
+    this.articleTitle,
+    this.coverPhoto,
+    this.tags,
+    this.viewedUsers,
+    this.articleContent,
+    this.date,
+    this.views,
+    this.saves,
+    this.likes,
+    this.category,
     this.isLike = false,
     this.isSaved = false,
   });
@@ -82,7 +82,7 @@ class Article extends Equatable {
       saves: map['saves'],
       isLike: map['is_liked'] == 0 ? false : true,
       isSaved: map['is_saved'] == 0 ? false : true,
-      category: map['category'],
+      category: map['category'] != null ? Category.fromMap(map['category']) : null,
     );
   }
 
@@ -121,7 +121,7 @@ class Article extends Equatable {
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
     id,
     authorId,
     author,
