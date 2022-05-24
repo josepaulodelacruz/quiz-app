@@ -127,30 +127,44 @@ class _HomeScreenState extends State<HomeScreen> {
     if (state.status == ArticleStatus.loading) {
       return Padding(
           padding: EdgeInsets.all(20), child: LinearProgressIndicator());
-    } else if (state.status == ArticleStatus.success ||
-        state.status == ArticleStatus.owner ||
-        state.status == ArticleStatus.viewUserSavedArticle ||
-        state.status == ArticleStatus.hideArticle ||
-        state.status == ArticleStatus.waiting
-    ) {
+    } else {
       return Column(
         children: [
           if(trendingArticles.isNotEmpty) ...[
             TrendingArticleSection(articles: trendingArticles),
           ],
-          GetArticleSection(articles: articles, verifiedArticlePagination: state.verifiedArticlePagination),
+          GetArticleSection(articles: articles,
+              verifiedArticlePagination: state.verifiedArticlePagination),
         ],
       );
-    } else {
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Text(
-          state.message,
-          style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                color: COLOR_PURPLE,
-              ),
-        ),
-      );
     }
+    // if (state.status == ArticleStatus.loading) {
+    //   return Padding(
+    //       padding: EdgeInsets.all(20), child: LinearProgressIndicator());
+    // } else if (state.status == ArticleStatus.success ||
+    //     state.status == ArticleStatus.owner ||
+    //     state.status == ArticleStatus.viewUserSavedArticle ||
+    //     state.status == ArticleStatus.hideArticle ||
+    //     state.status == ArticleStatus.waiting
+    // ) {
+    //   return Column(
+    //     children: [
+    //       if(trendingArticles.isNotEmpty) ...[
+    //         TrendingArticleSection(articles: trendingArticles),
+    //       ],
+    //       GetArticleSection(articles: articles, verifiedArticlePagination: state.verifiedArticlePagination),
+    //     ],
+    //   );
+    // } else {
+    //   return Padding(
+    //     padding: EdgeInsets.symmetric(horizontal: 20),
+    //     child: Text(
+    //       state.message,
+    //       style: Theme.of(context).textTheme.subtitle1!.copyWith(
+    //             color: COLOR_PURPLE,
+    //           ),
+    //     ),
+    //   );
+    // }
   }
 }

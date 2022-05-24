@@ -51,6 +51,7 @@ class BookWidget extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(
                   color: Colors.black,
                   fontWeight: FontWeight.w300,
+                  fontSize: SizeConfig.blockSizeVertical! * 2,
                 )
               ),
             ),
@@ -60,16 +61,8 @@ class BookWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Name",
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.2),
-                  ),
-                  Text(
-                    "|",
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.2),
-                  ),
-                  Text(
-                    "${_appUtils.convertDateTimeToString(DateTime.parse(article.date!))}",
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.2),
+                    "By: ${article.author}",
+                    style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.8),
                   ),
                 ],
               ),
