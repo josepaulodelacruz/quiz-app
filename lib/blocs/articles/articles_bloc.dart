@@ -219,7 +219,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
           message: response.message,
           articles: state.articles,
           getSavedArticles: savedArticles,
-          currentRead: state.currentRead.copyWith(isSaved: true),
+          currentRead: event.article,
       ));
     } else {
       emit(state.copyWith(
