@@ -13,9 +13,9 @@ import 'package:rte_app/screens/profile/widgets/saved_article_card_widget.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
-  bool isViewUser;
+  String? isViewUser;
 
-  ProfileScreen({Key? key, this.isViewUser = false}) : super(key: key);
+  ProfileScreen({Key? key, this.isViewUser}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -25,16 +25,30 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen>{
   late User author;
   late User user;
+  late User viewedUser;
 
   @override
   void initState() {
-    if(widget.isViewUser) {
+    if(widget.isViewUser == "author") {
       author = context.read<AuthBloc>().state.viewedAuthor!;
-      return;
+    }
+
+    if(widget.isViewUser == "view") {
+      viewedUser = context.read<AuthBloc>().state.viewedUser!;
     }
 
     user = context.read<AuthBloc>().state.user!;
     super.initState();
+  }
+
+  String urlPicture () {
+    if(widget.isViewUser == "author") {
+      return author.profilePhoto!;
+    } else if(widget.isViewUser == "view") {
+      return viewedUser.profilePhoto!;
+    } else {
+      return user.profilePhoto!;
+    }
   }
 
   @override
@@ -51,17 +65,24 @@ class _ProfileScreenState extends State<ProfileScreen>{
                   radius: SizeConfig.blockSizeVertical! * 12,
                   backgroundColor: COLOR_PURPLE,
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      widget.isViewUser ? author.profilePhoto! : user.profilePhoto!,
-                    ),
+                    backgroundImage: NetworkImage(urlPicture()),
                     radius: SizeConfig.blockSizeVertical! * 11.5,
                     backgroundColor: Colors.white,
                   ),
                 )
             ),
-            if(widget.isViewUser) ...[
+            if(widget.isViewUser == 'auhtor') ...[
               Text(
                 "${author.firstName} ${author.lastName}",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                  color: COLOR_PURPLE,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ] else if(widget.isViewUser == "view") ...[
+              Text(
+                "${viewedUser.firstName} ${viewedUser.lastName}",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headline4!.copyWith(
                   color: COLOR_PURPLE,
@@ -102,12 +123,14 @@ class _ProfileScreenState extends State<ProfileScreen>{
             ),
             earnSection(context),
             SizedBox(height: 20),
-            if(widget.isViewUser) ...[
+            if(widget.isViewUser == "author") ...[
               Expanded(child: savedArticleSection(context, author.articles!)),
+            ] else if(widget.isViewUser == "view") ...[
+              Expanded(child: savedArticleSection(context, viewedUser.articles!)),
             ] else ...[
               BlocBuilder<ArticlesBloc, ArticlesState>(
                   builder: (context, articleState) {
-                    if(!widget.isViewUser) {
+                    if(widget.isViewUser == null) {
                       return Expanded(child: savedArticleSection(context, articleState.getSavedArticles, status: articleState.status));
                     }
                     return SizedBox();
@@ -181,7 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
             Navigator.pushNamed(context, saved_article_screen);
           },
           title: Text(
-            widget.isViewUser ? "Written Articles" : "Saved Article",
+            widget.isViewUser == 'author' ? "Written Articles" : "Saved Article",
             style: Theme.of(context).textTheme.headline6!.copyWith(
               fontWeight: FontWeight.w500,
             )

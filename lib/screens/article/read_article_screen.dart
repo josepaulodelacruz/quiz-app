@@ -36,9 +36,9 @@ class ReadArticleScreen extends StatefulWidget {
 
 class _ReadArticleScreenState extends State<ReadArticleScreen> {
   late Article article;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   Color backgroundColor = Colors.transparent;
-  AppUtil _appUtil = AppUtil();
+  final AppUtil _appUtil = AppUtil();
   double elevation = 0;
 
   @override

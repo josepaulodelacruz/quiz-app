@@ -65,7 +65,10 @@ class ShowArticleScreen extends StatelessWidget {
               Navigator.pop(context);
             } else if(state.status == AuthStatus.viewAuthor) {
               Navigator.pop(context);
-              Navigator.pushNamed(context, profile_screen, arguments: true);
+              Navigator.pushNamed(context, profile_screen, arguments: "author");
+            } else if(state.status == AuthStatus.viewUser) {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, profile_screen, arguments: "view");
             }
           },
           child: BlocBuilder<ArticlesBloc, ArticlesState>(
@@ -249,7 +252,7 @@ class ShowArticleScreen extends StatelessWidget {
                                                       ...article.viewedUsers!.map((viewers) {
                                                         return ListTile(
                                                           onTap: () {
-                                                            // context.read<AuthBloc>().add(AuthViewUser(userId: viewers['id']));
+                                                            context.read<AuthBloc>().add(AuthViewUser(userId: viewers['id']));
                                                           },
                                                           leading: CircleAvatar(
                                                             backgroundColor: COLOR_PURPLE,

@@ -94,7 +94,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       response.collections!['saved_articles'].map((article) {
         savedArticles.add(Article.fromMap(article['article']));
       }).toList();
-      emit(state.copyWith(status: AuthStatus.success, viewedUser: user, viewedSavedArticles: savedArticles));
+      emit(state.copyWith(status: AuthStatus.viewUser, viewedUser: user, viewedSavedArticles: savedArticles));
     } else {
       emit(state.copyWith(status: AuthStatus.failed, message: response.message));
     }

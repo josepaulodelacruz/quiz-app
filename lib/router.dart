@@ -63,7 +63,7 @@ class PublicRouter {
         List<Map<String, dynamic>> result = settings.arguments as List<Map<String, dynamic>>;
         return CupertinoPageRoute(builder: (_) => QuizCompletedScreen(result: result));
       case profile_screen:
-        bool isView = settings.arguments as bool;
+        String isView = settings.arguments as String;
         return MaterialPageRoute(builder: (_) => ProfileScreen(isViewUser: isView));
       case profile_settings_screen:
         return MaterialPageRoute(builder: (_) => ProfileSettingsScreen());
