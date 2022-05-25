@@ -232,28 +232,36 @@ class ShowArticleScreen extends StatelessWidget {
                                     onTap: () {
                                       showModalBottomSheet(
                                         context: context,
+                                        isScrollControlled: true,
+                                        backgroundColor: Colors.transparent,
+                                        isDismissible: false,
                                         builder: (_) {
-                                          return Container(
-                                            height: SizeConfig.screenHeight! * .5,
-                                            padding: EdgeInsets.symmetric(horizontal: 15),
-                                            color: COLOR_WHITE,
-                                            child: ListView(
-                                              children: [
-                                                SizedBox(height: 20),
-                                                ...article.viewedUsers!.map((viewers) {
-                                                  return ListTile(
-                                                    onTap: () {
-                                                      // context.read<AuthBloc>().add(AuthViewUser(userId: viewers['id']));
-                                                    },
-                                                    leading: CircleAvatar(
-                                                      backgroundColor: COLOR_PURPLE,
-                                                      child: Text(viewers['full_name'].substring(0, 1), style: TextStyle(color: COLOR_WHITE)),
-                                                    ),
-                                                    title: Text(viewers['full_name']),
-                                                  );
-                                                }).toList(),
-                                              ],
-                                            )
+                                          return DraggableScrollableSheet(
+                                            initialChildSize: article.viewedUsers!.length <= 5 ? double.parse("0.${article.viewedUsers!.length}") : 0.5,
+                                            maxChildSize: 1,
+                                            minChildSize: article.viewedUsers!.length <= 5 ? double.parse("0.${article.viewedUsers!.length}") : 0.5,
+                                            builder: (context, scrollController) {
+                                              return Container(
+                                                  padding: EdgeInsets.symmetric(horizontal: 15),
+                                                  color: COLOR_WHITE,
+                                                  child: ListView(
+                                                    children: [
+                                                      ...article.viewedUsers!.map((viewers) {
+                                                        return ListTile(
+                                                          onTap: () {
+                                                            // context.read<AuthBloc>().add(AuthViewUser(userId: viewers['id']));
+                                                          },
+                                                          leading: CircleAvatar(
+                                                            backgroundColor: COLOR_PURPLE,
+                                                            child: Text(viewers['full_name'].substring(0, 1), style: TextStyle(color: COLOR_WHITE)),
+                                                          ),
+                                                          title: Text(viewers['full_name']),
+                                                        );
+                                                      }).toList(),
+                                                    ],
+                                                  )
+                                              );
+                                            },
                                           );
                                         }
                                       );
