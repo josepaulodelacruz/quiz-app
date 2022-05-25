@@ -285,9 +285,10 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   _likeArticle(LikeArticle event, Emitter<ArticlesState> emit) async {
     var response = await articleService.likingOfArticle(event);
     emit(state.copyWith(status: ArticleStatus.loading));
-    await Future.delayed(Duration(seconds: 1));
     if(!response.error) {
-      emit(state.copyWith(status: ArticleStatus.success, title: "", message: response.message, currentRead: state.currentRead.copyWith(isLike: true)));
+      int index = state.articles.indexWhere((element) => element.id == event.articleId);
+      state.articles[index] = event.article;
+      emit(state.copyWith(articles: state.articles, status: ArticleStatus.success, title: "", message: response.message, currentRead: event.article));
     } else {
       emit(state.copyWith(status: ArticleStatus.failed, title: "Failed to like article", message: response.message));
     }

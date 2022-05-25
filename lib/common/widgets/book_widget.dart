@@ -22,7 +22,6 @@ class BookWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        print(article.isSaved);
         context.read<ArticlesBloc>().emit(context.read<ArticlesBloc>().state.copyWith(currentRead: article));
         Navigator.pushNamed(context, view_article);
       },

@@ -153,10 +153,12 @@ class GetLikesArticle extends ArticleEvent {
 class LikeArticle extends ArticleEvent {
   final int? userId;
   final int? articleId;
+  final Article article;
 
   const LikeArticle({
     this.userId,
     this.articleId,
+    this.article = Article.empty,
   });
 
   @override
