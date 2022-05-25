@@ -96,9 +96,12 @@ class ShowArticleScreen extends StatelessWidget {
                               alignment: Alignment.topRight,
                               child: Padding(
                                 padding: EdgeInsets.all(20),
-                                child: CircleAvatar(
-                                    backgroundColor: Colors.black.withOpacity(.5),
-                                    child: Icon(Icons.close)),
+                                child: InkWell(
+                                  onTap: () => Navigator.pop(context),
+                                  child: CircleAvatar(
+                                      backgroundColor: Colors.black.withOpacity(.5),
+                                      child: Icon(Icons.close)),
+                                ),
                               ),
                             ),
                           ],
@@ -240,7 +243,7 @@ class ShowArticleScreen extends StatelessWidget {
                                                 ...article.viewedUsers!.map((viewers) {
                                                   return ListTile(
                                                     onTap: () {
-                                                      context.read<AuthBloc>().add(AuthViewUser(userId: viewers['id']));
+                                                      // context.read<AuthBloc>().add(AuthViewUser(userId: viewers['id']));
                                                     },
                                                     leading: CircleAvatar(
                                                       backgroundColor: COLOR_PURPLE,

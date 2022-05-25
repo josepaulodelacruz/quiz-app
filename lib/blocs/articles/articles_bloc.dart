@@ -85,7 +85,9 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
       if(event.hide) {
         emit(state.copyWith(status: ArticleStatus.hideArticle, title: ""));
       }
-      emit(state.copyWith(status: ArticleStatus.success, title: ""));
+      int index = state.articles.indexWhere((element) => element.id == event.id);
+      state.articles.removeAt(index);
+      emit(state.copyWith(articles: state.articles, status: ArticleStatus.success, title: ""));
     } else {
       emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
     }

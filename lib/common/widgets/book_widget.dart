@@ -61,7 +61,7 @@ class BookWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "By: ${article.author} | isSaved: ${article.isSaved}",
+                    "By: ${article.author}",
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.black, fontSize: SizeConfig.blockSizeVertical! * 1.8),
                   ),
                 ],
