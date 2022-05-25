@@ -168,10 +168,12 @@ class LikeArticle extends ArticleEvent {
 class UnlikeArticle extends ArticleEvent {
   final int? userId;
   final int? articleId;
+  final Article article;
 
   const UnlikeArticle({
     this.userId,
     this.articleId,
+    this.article = Article.empty,
   });
 
   @override

@@ -65,9 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: BlocBuilder<ArticlesBloc, ArticlesState>(
         builder: (context, state) {
           List<Tag> tags = BlocProvider.of<TagBloc>(context).state.selectedTags;
-          // List<Article> articles =
-          //     tags.length > 0 ? state.sortedArticles : state.articles;
-          List<Article> articles = state.articles;
+          List<Article> articles =
+              tags.length > 0 ? state.sortedArticles : state.articles;
           List<Article> trendingArticles = state.trendingArticles;
           List<Article> unfinishedArticles = state.unfinishedReadArticles;
           List<Article> latestArticles = state.latestArticles;

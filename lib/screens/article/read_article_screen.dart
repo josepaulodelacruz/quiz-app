@@ -102,15 +102,19 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                 setState(() {});
               } else if (selected == "Like") {
                 article = article.copyWith(isLike: true, likes: article.likes! + 1);
+                setState(() {});
                 context.read<ArticlesBloc>().add(LikeArticle(
                       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
                       articleId: article.id,
                       article: article,
                     ));
               } else if (selected == "Unlike") {
+                article = article.copyWith(isLike: false, likes: article.likes! - 1);
+                setState(() {});
                 context.read<ArticlesBloc>().add(UnlikeArticle(
                       userId: BlocProvider.of<AuthBloc>(context).state.user!.id,
                       articleId: article.id,
+                      article: article,
                     ));
               } else {
                 context.read<ArticlesBloc>().add(ShowViolationList(isShow: true));
