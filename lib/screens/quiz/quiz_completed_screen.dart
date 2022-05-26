@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rte_app/blocs/ads/ads_bloc.dart';
 import 'package:rte_app/blocs/ads/ads_event.dart';
+import 'package:rte_app/blocs/articles/articles_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_state.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
@@ -20,7 +22,9 @@ class QuizCompletedScreen extends StatelessWidget {
     return Scaffold(
       appBar: TransparentAppBarWidget(
         onPressed: () {
-          Navigator.pushNamed(context, main_layout);
+          var count = 4;
+          context.read<AdsBloc>().add(ClearAds());
+          Navigator.of(context).popUntil((_) => count-- <= 0);
         },
       ),
       body: SizedBox(
@@ -37,8 +41,9 @@ class QuizCompletedScreen extends StatelessWidget {
                   padding: EdgeInsets.all(20),
                   child: PrimaryButtonWidget(
                     onPressed: () {
+                      var count = 4;
                       context.read<AdsBloc>().add(ClearAds());
-                      Navigator.pushNamed(context, main_layout);
+                      Navigator.of(context).popUntil((_) => count-- <= 0);
                     },
                     color: COLOR_PINK,
                     child: Text(

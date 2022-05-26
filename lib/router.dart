@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/screen_arguments.dart';
@@ -26,6 +27,7 @@ import 'package:rte_app/screens/splash_screen.dart';
 
 class PublicRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    print('Current route ${settings.name}');
     switch (settings.name) {
       case splash_screen:
         return MaterialPageRoute(builder: (_) => SplashScreen());
@@ -37,7 +39,7 @@ class PublicRouter {
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case registration_screen:
         return MaterialPageRoute(builder: (_) => RegistrationScreen());
-      case 'main_layout':
+      case main_layout:
         return MaterialPageRoute(builder: (_) => MainLayout());
       case home_screen:
         return MaterialPageRoute(builder: (_) => HomeScreen());
@@ -84,6 +86,16 @@ class PublicRouter {
     }
   }
 }
+
+final GoRouter router = GoRouter(
+  routes: <GoRoute>[
+    GoRoute(
+      path: splash_screen,
+      builder: (_, GoRouterState state) => SplashScreen(),
+    ),
+  ]
+
+);
 
 // class PrivateRouter {
 //   static Route<dynamic> generateRoute(RouteSettings settings) {

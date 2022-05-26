@@ -50,6 +50,7 @@ dependencies:
   laravel_flutter_pusher: ^0.0.4
   laravel_echo: ^1.0.0-beta.1
   flutter_cache_manager: ^3.3.0
+  go_router: ^3.1.0
 
   sensitive_http:
     git:

@@ -26,8 +26,7 @@ class _SplashScreenState extends State<SplashScreen>{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       String? user = prefs.getString('user-details');
-      print('get token');
-      print(token);
+      print('get token $token');
       if(token == null || token == "") {
         Navigator.pushNamed(context, onboard_screen);
       } else {
@@ -40,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen>{
       switch(state.status) {
         case CookieStatus.notExpired:
           getIt<CookieBloc>().emit(state.copyWith(cookie: state.cookie));
-          Navigator.pushNamed(context, 'main_layout');
+          Navigator.pushNamed(context, main_layout);
           break;
         case CookieStatus.expired:
           Navigator.pushNamed(context, onboard_screen);

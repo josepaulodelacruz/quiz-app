@@ -68,6 +68,10 @@ class _MyAppState extends State<MyApp> {
           create: (context) => SearchBloc(searchService: SearchService()),
         )
       ],
+      // child: MaterialApp.router(
+      //   title: "testing",
+      //   routerDelegate: OnRouter.router.routerDelegate,
+      // ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: createTheme(context),
