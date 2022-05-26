@@ -243,7 +243,6 @@ class _ProfileScreenState extends State<ProfileScreen>{
                       style: Theme.of(context).textTheme.bodyText1!.copyWith(color: COLOR_DARK_GRAY, fontWeight: FontWeight.w700),
                     )
                   ]
-
                 ],
               )
             )

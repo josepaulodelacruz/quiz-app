@@ -79,6 +79,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _reportArticle(ReportArticle event, Emitter<ArticlesState> emit) async {
+
     emit(state.copyWith(status: ArticleStatus.loading));
     var response = await articleService.reportArticle(event);
     if(!response.error) {
@@ -86,8 +87,12 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
         emit(state.copyWith(status: ArticleStatus.hideArticle, title: ""));
       }
       int index = state.articles.indexWhere((element) => element.id == event.id);
+      int savedArticleIndex = state.getSavedArticles.indexWhere((element) => element.id == event.id);
       state.articles.removeAt(index);
-      emit(state.copyWith(articles: state.articles, status: ArticleStatus.success, title: ""));
+      if(savedArticleIndex != -1) {
+        state.getSavedArticles.removeAt(savedArticleIndex);
+      }
+      emit(state.copyWith(articles: state.articles, getSavedArticles: state.getSavedArticles, status: ArticleStatus.success, title: ""));
     } else {
       emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
     }

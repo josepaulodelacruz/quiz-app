@@ -34,7 +34,7 @@ class _ReportFormWidgetState extends State<ReportFormWidget> {
         FocusScope.of(context).unfocus();
       },
       child: AlertDialog(
-        content: Container(
+        content: SizedBox(
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,

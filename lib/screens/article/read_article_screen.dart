@@ -186,9 +186,8 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                   Navigator.pushNamed(context, quiz_screen,
                       arguments: article);
                 }
-                setState(() {
-                  article = state.currentRead;
-                });
+                article = state.currentRead;
+                setState(() {});
                 break;
               case ArticleStatus.failed:
                 if(state.title != "") {
@@ -208,6 +207,19 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
                 Navigator.pop(context);
                 Navigator.pop(context);
                 // Navigator.pushNamedAndRemoveUntil(context, 'main_layout', (route) => true);
+                break;
+              default:
+                break;
+            }
+          } else {
+            switch(state.status) {
+              case ArticleStatus.showViolationList:
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (_) =>
+                      ReportFormWidget(violations: state.violations, article: article),
+                );
                 break;
               default:
                 break;
