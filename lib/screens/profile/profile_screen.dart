@@ -200,18 +200,26 @@ class _ProfileScreenState extends State<ProfileScreen>{
     return Column(
       children: [
         ListTile(
-          onTap: () {
-            Navigator.pushNamed(context, saved_article_screen);
-          },
           title: Text(
             widget.isViewUser == 'author' ? "Written Articles" : "Saved Article",
             style: Theme.of(context).textTheme.headline6!.copyWith(
               fontWeight: FontWeight.w500,
             )
           ),
-          trailing: Text(
-            "See All",
-            style: Theme.of(context).textTheme.bodyText1!.copyWith(color: COLOR_PURPLE, fontWeight: FontWeight.w700),
+          trailing: InkWell(
+            onTap: () {
+              if(articles.isEmpty) {
+                return;
+              }
+
+              Navigator.pushNamed(context, saved_article_screen);
+            },
+            child: Text(
+              "See All",
+              style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                  color: articles.isNotEmpty ? COLOR_PURPLE : COLOR_DARK_GRAY,
+                  fontWeight: FontWeight.w700),
+            ),
           ),
         ),
         Expanded(
@@ -221,11 +229,21 @@ class _ProfileScreenState extends State<ProfileScreen>{
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(width: 10),
-                  ...articles.map((article) {
-                    return SavedArticleCardWidget(article: article);
-                  }).toList()
+                  if(articles.isNotEmpty) ...[
+                    ...articles.map((article) {
+                      return SavedArticleCardWidget(article: article);
+                    }).toList()
+                  ] else ...[
+                    SizedBox(width: 5),
+                    Text(
+                      "No Saved Articles",
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(color: COLOR_DARK_GRAY, fontWeight: FontWeight.w700),
+                    )
+                  ]
+
                 ],
               )
             )
