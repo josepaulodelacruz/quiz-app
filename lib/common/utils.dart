@@ -60,8 +60,8 @@ class AppUtil {
   }
 
   void modalHudLoad(context,
-      {String load = "Loading...",
-        Color color = Colors.white,
+      {String load = "Please wait! Loading...",
+        Color color = COLOR_DARK_GRAY,
         Color indicatorColor = Colors.white}) async {
     showDialog(
       barrierColor: Colors.black.withOpacity(0.4),
@@ -69,16 +69,22 @@ class AppUtil {
       context: context,
       builder: (_) => WillPopScope(
         onWillPop: () => Future.value(false),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(color: COLOR_PURPLE),
-            SizedBox(height: 10),
-            Text(
-              load,
-              style: Theme.of(context).textTheme.subtitle1!.copyWith(color: color),
-            ),
-          ],
+        child: AlertDialog(
+          content: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              CircularProgressIndicator(color: COLOR_PURPLE),
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  load,
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+                  // style: Theme.of(context).textTheme.subtitle1!.copyWith(color: color),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
