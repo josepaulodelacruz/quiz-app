@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
+import 'package:rte_app/blocs/articles/articles_event.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/utils.dart';
 import 'package:rte_app/common/size_config.dart';
@@ -23,7 +24,19 @@ class BookWidget extends StatelessWidget {
     return InkWell(
       onTap: () {
         context.read<ArticlesBloc>().emit(context.read<ArticlesBloc>().state.copyWith(currentRead: article));
-        Navigator.pushNamed(context, view_article);
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          isDismissible: false,
+          builder: (_) => DraggableScrollableSheet(
+              initialChildSize: 1,
+              builder: (_, scrollController) {
+                return ShowArticleScreen();
+              },
+          )
+        );
+        // Navigator.pushNamed(context, view_article);
       },
       child: Container(
         margin: EdgeInsets.only(left: 20, bottom: 20),
