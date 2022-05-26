@@ -62,8 +62,6 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     }
   }
 
-
-
   _getViolations (GetViolations event, Emitter<ArticlesState> emit) async {
     var response = await articleService.getViolations();
     emit(state.copyWith(status: ArticleStatus.loading));
