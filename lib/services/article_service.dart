@@ -255,10 +255,15 @@ class ArticleService extends ApiService {
     }
   }
 
-  Future<ArticleResponse> getLikesOfArticle(int id) async {
+  Future<ArticleResponse> getLikesOfArticle() async {
     try {
       var response = await get('/api/user/get-liked-article');
-      return ArticleResponse.fromMap(response);
+      return ArticleResponse(
+        message: response['message'],
+        status: response['status'],
+        error: false,
+        collections: {"body": response['body']},
+      );
     } on ApiResponseError catch(error) {
       return ArticleResponse(
         message: error.message,

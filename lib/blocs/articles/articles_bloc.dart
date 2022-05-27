@@ -275,17 +275,16 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
   }
 
   _getLikesArticles(GetLikesArticle event, Emitter<ArticlesState> emit) async {
-    print('get likes articles');
-    // var response = await articleService.getLikesOfArticle(event.userId);
-    // emit(state.copyWith(status: ArticleStatus.loading));
-    // if(!response.error) {
-    //   // List<Article> likesArticles = response.collections!.map((collection) {
-    //   //   return Article.fromMap(collection['article']);
-    //   // }).toList();
-    //   emit(state.copyWith(status: ArticleStatus.success, likesArticles: likesArticles));
-    // } else {
-    //   emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
-    // }
+    var response = await articleService.getLikesOfArticle();
+    emit(state.copyWith(status: ArticleStatus.loading));
+    if(!response.error) {
+      List<Article> likesArticles = (response.collections!['body'] as List).map((collection) {
+        return Article.fromMap(collection['article']);
+      }).toList();
+      emit(state.copyWith(status: ArticleStatus.success, likesArticles: likesArticles));
+    } else {
+      emit(state.copyWith(status: ArticleStatus.failed, message: response.message));
+    }
   }
 
   _likeArticle(LikeArticle event, Emitter<ArticlesState> emit) async {
