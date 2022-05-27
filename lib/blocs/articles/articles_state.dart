@@ -26,7 +26,7 @@ class ArticlesState extends Equatable {
   final Article currentRead;
   final List<Article> unfinishedReadArticles;
   final List<Article> getSavedArticles;
-  final List<Article> getUserSavedArticles;
+  // final List<Article> getUserSavedArticles;
   final List<Article> likesArticles;
   final List<Question> questions;
   final ArticleStatus status;
@@ -46,7 +46,7 @@ class ArticlesState extends Equatable {
     this.unfinishedReadArticle = Article.empty,
     this.unfinishedReadArticles = const [],
     this.getSavedArticles = const [],
-    this.getUserSavedArticles = const [],
+    // this.getUserSavedArticles = const [],
     this.likesArticles = const [],
     this.questions = const [],
     this.overall = const [],
@@ -91,7 +91,7 @@ class ArticlesState extends Equatable {
       unfinishedReadArticles:
           unfinishedReadArticles ?? this.unfinishedReadArticles,
       getSavedArticles: getSavedArticles ?? this.getSavedArticles,
-      getUserSavedArticles: getUserSavedArticles ?? this.getUserSavedArticles,
+      // getUserSavedArticles: getUserSavedArticles ?? this.getUserSavedArticles,
       likesArticles: likesArticles ?? this.likesArticles,
       questions: questions ?? this.questions,
       overall: overall ?? this.overall,
@@ -115,7 +115,7 @@ class ArticlesState extends Equatable {
         unfinishedReadArticle,
         unfinishedReadArticles,
         getSavedArticles,
-        getUserSavedArticles,
+        // getUserSavedArticles,
         likesArticles,
         overall,
         verifiedArticlePagination,
