@@ -29,4 +29,5 @@ const payments_billins_earning_screen = '/billings-earning';
 const payments_method_screen = '/payment-method';
 
 const saved_article_screen = '/articles/saved';
+const saved_categorize_article_screen = '/articles/saved/categorize';
 

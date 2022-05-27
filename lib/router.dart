@@ -7,6 +7,7 @@ import 'package:rte_app/models/screen_arguments.dart';
 import 'package:rte_app/models/user.dart';
 import 'package:rte_app/screens/article/read_article_screen.dart';
 import 'package:rte_app/screens/article/saved_article_screen.dart';
+import 'package:rte_app/screens/article/saved_categorize_article_screen.dart';
 import 'package:rte_app/screens/article/show_article_screen.dart';
 import 'package:rte_app/screens/category/category_screen.dart';
 import 'package:rte_app/screens/home/home_screen.dart';
@@ -57,6 +58,12 @@ class PublicRouter {
                 isViewedSavedArticle: arguments.isViewedSavedArticle));
       case saved_article_screen:
         return CupertinoPageRoute(builder: (_) => SavedArticleScreen());
+      case saved_categorize_article_screen:
+        ScreenArguments arguments = settings.arguments as ScreenArguments;
+        return CupertinoPageRoute(builder: (_) => SavedCategorizeArticleScreen(
+          pageName: arguments.pageName,
+          categorizedArticles: arguments.categorizedArticles,
+        ));
       case quiz_screen:
         Article readArticle = settings.arguments as Article;
         return CupertinoPageRoute(

@@ -6,7 +6,9 @@ import 'package:rte_app/blocs/articles/articles_state.dart';
 import 'package:rte_app/blocs/auth/auth_bloc.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
+import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/screen_arguments.dart';
 
 class SavedArticleScreen extends StatefulWidget {
   const SavedArticleScreen({Key? key}) : super(key: key);
@@ -17,7 +19,7 @@ class SavedArticleScreen extends StatefulWidget {
 
 class _SavedArticleScreenState extends State<SavedArticleScreen> {
   List<dynamic> categories = [];
-  Map<String, dynamic> sortedArticles = {};
+  Map<String, List<Article>> sortedArticles = {};
 
   @override
   void initState () {
@@ -29,7 +31,7 @@ class _SavedArticleScreenState extends State<SavedArticleScreen> {
       sortedArticles[category] = [];
       BlocProvider.of<ArticlesBloc>(context).state.getSavedArticles.map((article) {
         if(article.category!.name == category) {
-          sortedArticles[category].add(article);
+          sortedArticles[category]!.add(article);
         }
       }).toList();
     }).toList();
@@ -57,54 +59,62 @@ class _SavedArticleScreenState extends State<SavedArticleScreen> {
                 mainAxisSpacing: 2,
               ),
               itemBuilder: (_, int index) {
-                return Container(
-                    margin: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: Container(
-                              height: SizeConfig.screenHeight,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: GridView.builder(
-                                itemCount: 4,
-                                physics: NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 2,
-                                  mainAxisSpacing: 2,
+                return InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, saved_categorize_article_screen, arguments: ScreenArguments(
+                      categorizedArticles: sortedArticles[categories[index]] as List<Article>,
+                      pageName: categories[index],
+                    ));
+                  },
+                  child: Container(
+                      margin: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Container(
+                                height: SizeConfig.screenHeight,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                itemBuilder: (_, int subIndex) {
-                                  if(sortedArticles[categories[index]].length > subIndex) {
-                                    return SizedBox(
-                                      child: CachedNetworkImage(
-                                        imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
-                                        fit: BoxFit.contain,
-                                      ),
-                                    );
-                                  } else {
-                                    return Container(
-                                      color: COLOR_PURPLE.withOpacity(.2),
-                                    );
-                                  }
-                                },
-                              )
+                                child: GridView.builder(
+                                  itemCount: 4,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 2,
+                                    mainAxisSpacing: 2,
+                                  ),
+                                  itemBuilder: (_, int subIndex) {
+                                    if(sortedArticles[categories[index]]!.length > subIndex) {
+                                      return SizedBox(
+                                        child: CachedNetworkImage(
+                                          imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
+                                          fit: BoxFit.contain,
+                                        ),
+                                      );
+                                    } else {
+                                      return Container(
+                                        color: COLOR_PURPLE.withOpacity(.2),
+                                      );
+                                    }
+                                  },
+                                )
+                            ),
                           ),
-                        ),
-                        Text(
-                            "${categories[index]}",
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .subtitle1!
-                                .copyWith(
-                              color: COLOR_PURPLE,
-                            )
-                        )
-                      ],
-                    )
+                          Text(
+                              "${categories[index]}",
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(
+                                color: COLOR_PURPLE,
+                              )
+                          )
+                        ],
+                      )
+                  ),
                 );
               },
             )
