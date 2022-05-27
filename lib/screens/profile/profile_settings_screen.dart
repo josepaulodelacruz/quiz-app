@@ -43,9 +43,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       radius: SizeConfig.blockSizeVertical! * 10,
                       backgroundColor: COLOR_PURPLE,
                       child: CircleAvatar(
+                        backgroundImage: NetworkImage(user.profilePhoto.toString()),
                         radius: SizeConfig.blockSizeVertical! * 9.5,
                         backgroundColor: Colors.white,
-                        child: FlutterLogo(size: SizeConfig.blockSizeVertical! * 11.5),
                       ),
                     )
                 ),
@@ -89,9 +89,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                   ),
                 ),
                 menuSettings(label: "Saved / Like", onPressed: () {
-                  context.read<ArticlesBloc>().add(GetLikesArticle(
-                    userId: BlocProvider.of<AuthBloc>(context).state.user!.id ?? 0,
-                  ));
+                  context.read<ArticlesBloc>().add(GetLikesArticle());
                   Navigator.pushNamed(context, saves_likes_screen);
                 }),
                 menuSettings(label: "Account Settings"),

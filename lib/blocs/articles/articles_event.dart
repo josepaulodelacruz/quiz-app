@@ -142,9 +142,8 @@ class DeletedSavedArticles extends ArticleEvent {
 }
 
 class GetLikesArticle extends ArticleEvent {
-  final int userId;
 
-  const GetLikesArticle({this.userId = 0});
+  const GetLikesArticle();
 
   @override
   List<Object> get props => [];

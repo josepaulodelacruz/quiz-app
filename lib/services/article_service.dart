@@ -257,7 +257,7 @@ class ArticleService extends ApiService {
 
   Future<ArticleResponse> getLikesOfArticle(int id) async {
     try {
-      var response = await get('/api/user/get-liked-article/${id}');
+      var response = await get('/api/user/get-liked-article');
       return ArticleResponse.fromMap(response);
     } on ApiResponseError catch(error) {
       return ArticleResponse(
