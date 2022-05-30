@@ -109,6 +109,30 @@ class ArticleService extends ApiService {
     }
   }
 
+  Future<ArticleResponse> getNextArticles (String url) async {
+    try {
+      var response = await get('/api/user/get-articles?${url}');
+      return ArticleResponse(
+        status: response['status'],
+        message: response['message'],
+        error: false,
+        collections: {'body': response['body']},
+      );
+    } on ApiResponseError catch (error) {
+      return ArticleResponse(
+        message: error.message,
+        status: 400,
+        error: true,
+      );
+    } on SocketException catch(error) {
+      return ArticleResponse(message: error.toString(), error: true);
+    } catch (error) {
+      print('this is error');
+      print(error);
+      return ArticleResponse(message: error.toString(), error: true);
+    }
+  }
+
   Future<ArticleResponse> articleGetContent(ArticleGetContentEvent event) async {
     try {
       var response = await get('/api/user/get-article-content/${event.id}');

@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Article> articles = [];
   ScrollController _scrollController = ScrollController();
   Color backgroundColor = Colors.transparent;
   double elevation = 0;
@@ -62,67 +63,76 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: TransparentAppBarWidget(
           elevation: elevation, backgroundColor: backgroundColor),
-      body: BlocBuilder<ArticlesBloc, ArticlesState>(
-        builder: (context, state) {
-          List<Tag> tags = BlocProvider.of<TagBloc>(context).state.selectedTags;
-          List<Article> articles =
-              tags.length > 0 ? state.sortedArticles : state.articles;
-          List<Article> trendingArticles = state.trendingArticles;
-          List<Article> unfinishedArticles = state.unfinishedReadArticles;
-          List<Article> latestArticles = state.latestArticles;
-          return SafeArea(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                context.read<ArticlesBloc>().add(ArticleGetEvent());
-                context.read<TagBloc>().add(GetTags());
-              },
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    HeaderSection(),
-                    if (unfinishedArticles.length > 0) ...[
-                      ContinueReadingSection(
-                          unfinishedReadArticles: unfinishedArticles),
-                    ],
-                    CategorySection(),
-                    _articleTrendingSection(state, articles, trendingArticles),
-                    if (latestArticles.length > 0) ...[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ListTile(
-                            title: Text(
-                              "Latest Articles",
-                              style: Theme.of(context).textTheme.headline5!,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ArticlesBloc, ArticlesState>(
+            listener: (_, event) {
+              articles = event.articles;
+              setState(() {});
+            },
+          )
+        ],
+        child: BlocBuilder<ArticlesBloc, ArticlesState>(
+          builder: (context, state) {
+            List<Tag> tags = BlocProvider.of<TagBloc>(context).state.selectedTags;
+            // List<Article> articles = tags.length > 0 ? state.sortedArticles : state.articles;
+            List<Article> trendingArticles = state.trendingArticles;
+            List<Article> unfinishedArticles = state.unfinishedReadArticles;
+            List<Article> latestArticles = state.latestArticles;
+            return SafeArea(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  context.read<ArticlesBloc>().add(ArticleGetEvent());
+                  context.read<TagBloc>().add(GetTags());
+                },
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      HeaderSection(),
+                      if (unfinishedArticles.length > 0) ...[
+                        ContinueReadingSection(
+                            unfinishedReadArticles: unfinishedArticles),
+                      ],
+                      CategorySection(),
+                      _articleTrendingSection(state, trendingArticles),
+                      if (latestArticles.length > 0) ...[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ListTile(
+                              title: Text(
+                                "Latest Articles",
+                                style: Theme.of(context).textTheme.headline5!,
+                              ),
+                              trailing: TextButton(
+                                onPressed: () {},
+                                child: Text("See all",
+                                    style: TextStyle(color: COLOR_PURPLE)),
+                              ),
                             ),
-                            trailing: TextButton(
-                              onPressed: () {},
-                              child: Text("See all",
-                                  style: TextStyle(color: COLOR_PURPLE)),
-                            ),
-                          ),
-                          ...latestArticles.map((latestArticle) {
-                            return Container(
-                                margin: EdgeInsets.symmetric(vertical: 5),
-                                child: ArticleCardWidget(article: latestArticle));
-                          }).toList(),
-                          // ArticleCardWidget(),
-                        ],
-                      )
+                            ...latestArticles.map((latestArticle) {
+                              return Container(
+                                  margin: EdgeInsets.symmetric(vertical: 5),
+                                  child: ArticleCardWidget(article: latestArticle));
+                            }).toList(),
+                            // ArticleCardWidget(),
+                          ],
+                        )
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _articleTrendingSection(ArticlesState state, articles, trendingArticles) {
+  Widget _articleTrendingSection(ArticlesState state, trendingArticles) {
     if (state.status == ArticleStatus.loading) {
       return Padding(
           padding: EdgeInsets.all(20), child: LinearProgressIndicator());

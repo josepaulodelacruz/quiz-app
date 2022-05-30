@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
             break;
           case AuthStatus.success:
             Navigator.pop(context);
-            Navigator.pushNamed(context, 'main_layout');
+            Navigator.pushNamed(context, main_layout);
             break;
           case AuthStatus.failed:
             Navigator.pop(context);

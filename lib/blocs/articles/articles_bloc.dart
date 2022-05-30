@@ -133,8 +133,23 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
     }
   }
 
-  _verifiedNextPage (VerifiedArticlesNextScroll event, Emitter<ArticlesState> emit) {
-    print(event.verifiedArticlePagination);
+  _verifiedNextPage (VerifiedArticlesNextScroll event, Emitter<ArticlesState> emit) async {
+    if(event.verifiedArticlePagination.urlNextPage.isEmpty) return;
+    var a = event.verifiedArticlePagination.urlNextPage.split('?');
+    String cursor = a[1];
+    var response = await articleService.getNextArticles(cursor);
+    if(!response.error) {
+      List<Article> nextArticles = [];
+      List<Article> articles = [];
+      VerifiedArticlePagination paginate = VerifiedArticlePagination.fromMap(response.collections!['body']);
+      response.collections!['body']['data'].map((article) {
+        nextArticles.add(Article.fromMap(article));
+      }).toList();
+      articles = [...state.articles, ...nextArticles];
+      print('articles length ${articles.length}');
+      emit(state.copyWith(verifiedArticlePagination: paginate, articles: articles));
+    }
+
   }
 
   _viewArticle(ArticleView event, Emitter<ArticlesState> emit) async {
