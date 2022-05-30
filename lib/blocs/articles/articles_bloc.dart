@@ -191,6 +191,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
       ArticleSave event, Emitter<ArticlesState> emit) async {
     if(state.unfinishedReadArticle.articleTitle != null) {
        var response = articleService.savedArticle(state.unfinishedReadArticle);
+       print('saving article ${response}');
     }
   }
 
