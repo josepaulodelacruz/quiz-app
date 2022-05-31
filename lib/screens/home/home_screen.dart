@@ -18,13 +18,15 @@ import 'package:rte_app/screens/home/widgets/header_section.dart';
 import 'package:rte_app/screens/home/widgets/trending_article_section.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Article> articles = [];
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   Color backgroundColor = Colors.transparent;
   double elevation = 0;
 
@@ -67,7 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
         listeners: [
           BlocListener<ArticlesBloc, ArticlesState>(
             listener: (_, event) {
-              articles = event.articles;
+              List<Tag> tags = BlocProvider.of<TagBloc>(context).state.selectedTags;
+              articles = tags.length > 0 ? event.sortedArticles : event.articles;
               setState(() {});
             },
           )

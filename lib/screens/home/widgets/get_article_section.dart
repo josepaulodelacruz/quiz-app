@@ -25,13 +25,13 @@ class GetArticleSection extends StatelessWidget {
             "Articles",
             style: Theme.of(context).textTheme.headline5!,
           ),
-          trailing: TextButton(
-            onPressed: () {},
-            child: Text(
-                "See all",
-                style: TextStyle(color: COLOR_PURPLE)
-            ),
-          ),
+          // trailing: TextButton(
+          //   onPressed: () {},
+          //   child: Text(
+          //       "See all",
+          //       style: TextStyle(color: COLOR_PURPLE)
+          //   ),
+          // ),
         ),
         SizedBox(
             height: 170,
