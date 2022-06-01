@@ -167,11 +167,11 @@ class _SearchScreenState extends State<SearchScreen> {
                       return SearchCardAuthorWidget(
                         result: author,
                         onPressed: () async {
-                          // context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
-                          // modalHudLoad(context);
-                          // await Future.delayed(Duration(milliseconds: 1000));
-                          // Navigator.pop(context);
-                          // Navigator.pushNamed(context, profile_screen, arguments: true);
+                          context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
+                          modalHudLoad(context);
+                          await Future.delayed(Duration(milliseconds: 1000));
+                          Navigator.pop(context);
+                          Navigator.pushNamed(context, profile_screen, arguments: 'author');
                         },
                       );
                     }).toList() ?? [],
