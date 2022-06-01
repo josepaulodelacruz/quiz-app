@@ -113,7 +113,7 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
 
       response.collections!['trending_articles'].map((article) {
          trendingArticles.add(Article.fromMap(article));
-      });
+      }).toList();
 
       response.collections!['latest_articles'].map((article) {
         latestArticle.add(Article.fromMap(article));
