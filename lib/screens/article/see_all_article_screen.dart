@@ -1,9 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
+import 'package:rte_app/models/article.dart';
 
 class SeeAllScreen extends StatefulWidget {
-  const SeeAllScreen({Key? key}) : super(key: key);
+  final List<Article> articles;
+  const SeeAllScreen({Key? key, this.articles = const []}) : super(key: key);
 
   @override
   State<SeeAllScreen> createState() => _SeeAllScreenState();
@@ -19,16 +22,14 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
         title: Text("Articles"),
       ),
       body: ListView(
-        children: [
-          _articleCard(),
-          _articleCard(),
-
-        ],
+        children: widget.articles.map((article) {
+          return _articleCard(article);
+        }).toList(),
       )
     );
   }
 
-  Widget _articleCard() {
+  Widget _articleCard(Article article) {
     return Container(
       height: SizeConfig.screenHeight! * .50,
       margin: EdgeInsets.only(bottom: 10),
@@ -38,17 +39,14 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
         child: Column(
           children: [
             ListTile(
-              leading: CircleAvatar(
-                child: FlutterLogo(),
-              ),
               title: Text(
-                "Article",
+                article.articleTitle!,
                 style: Theme.of(context).textTheme.headline6!.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
               subtitle: Text(
-                "Jose Paulo",
+                article.author!,
                 style: Theme.of(context).textTheme.subtitle2!.copyWith(
                   color: COLOR_DARK_GRAY,
                 ),
@@ -64,7 +62,12 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
               ),
             ),
             Flexible(
-              child: Placeholder(),
+              child: CachedNetworkImage(
+                imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
+                width: SizeConfig.screenWidth,
+                height: SizeConfig.screenHeight,
+                fit: BoxFit.cover,
+              ),
             ),
             ListTile(
               visualDensity: VisualDensity(horizontal: -4, vertical: -4),
@@ -74,7 +77,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                   Icon(Icons.favorite, color: COLOR_PURPLE, size: SizeConfig.blockSizeVertical! * 1.5),
                   SizedBox(width: 5),
                   Text(
-                    "302",
+                    "${article.likes} likes",
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(
                       fontSize: SizeConfig.blockSizeVertical! * 1.5,
                       fontWeight: FontWeight.w500
@@ -100,7 +103,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                     ),
                   ),
                   Text(
-                    "40 saves",
+                    "${article.saves} saves",
                     style: Theme.of(context).textTheme.bodyText1!.copyWith(
                         fontSize: SizeConfig.blockSizeVertical! * 1.5,
                         fontWeight: FontWeight.w500

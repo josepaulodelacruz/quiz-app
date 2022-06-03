@@ -4,6 +4,7 @@ import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/widgets/book_widget.dart';
 import 'package:rte_app/models/article.dart';
+import 'package:rte_app/models/screen_arguments.dart';
 
 class TrendingArticleSection extends StatelessWidget {
   final List<Article> articles;
@@ -23,7 +24,7 @@ class TrendingArticleSection extends StatelessWidget {
           ),
           trailing: TextButton(
             onPressed: () {
-              Navigator.pushNamed(context, see_all_articles);
+              Navigator.pushNamed(context, see_all_articles, arguments: articles);
             },
             child: Text(
                 "See all",

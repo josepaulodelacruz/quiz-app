@@ -46,7 +46,8 @@ class PublicRouter {
       case home_screen:
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case see_all_articles:
-        return CupertinoPageRoute(builder: (_) => SeeAllScreen());
+        List<Article> articles = settings.arguments as List<Article>;
+        return CupertinoPageRoute(builder: (_) => SeeAllScreen(articles: articles));
       case categories_screen:
         List<Tag> tags = settings.arguments as List<Tag>;
         return MaterialPageRoute(builder: (_) => CategoryScreen(tags: tags));
