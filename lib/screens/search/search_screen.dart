@@ -146,7 +146,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           modalHudLoad(context);
                           await Future.delayed(Duration(milliseconds: 1000));
                           Navigator.pop(context);
-                          Navigator.pushNamed(context, profile_screen, arguments: true);
+                          Navigator.pushNamed(context, profile_screen, arguments: 'view');
                         },
                       );
                     }).toList() ?? [],

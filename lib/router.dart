@@ -8,6 +8,7 @@ import 'package:rte_app/models/user.dart';
 import 'package:rte_app/screens/article/read_article_screen.dart';
 import 'package:rte_app/screens/article/saved_article_screen.dart';
 import 'package:rte_app/screens/article/saved_categorize_article_screen.dart';
+import 'package:rte_app/screens/article/see_all_article_screen.dart';
 import 'package:rte_app/screens/article/show_article_screen.dart';
 import 'package:rte_app/screens/category/category_screen.dart';
 import 'package:rte_app/screens/home/home_screen.dart';
@@ -44,6 +45,8 @@ class PublicRouter {
         return MaterialPageRoute(builder: (_) => MainLayout());
       case home_screen:
         return MaterialPageRoute(builder: (_) => HomeScreen());
+      case see_all_articles:
+        return CupertinoPageRoute(builder: (_) => SeeAllScreen());
       case categories_screen:
         List<Tag> tags = settings.arguments as List<Tag>;
         return MaterialPageRoute(builder: (_) => CategoryScreen(tags: tags));

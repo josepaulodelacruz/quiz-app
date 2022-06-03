@@ -13,7 +13,9 @@ const String dev_endpoint = "http://10.0.2.2:8000";
 
 ThemeData createTheme(BuildContext context) {
   return ThemeData(
-    // appBarTheme: appBarTheme,
+    appBarTheme: AppBarTheme(
+      backgroundColor: COLOR_PURPLE
+    ),
     scaffoldBackgroundColor: COLOR_GRAY,
     primarySwatch: Colors.deepPurple,
     textTheme: TextTheme(
@@ -27,7 +29,7 @@ ThemeData createTheme(BuildContext context) {
       headline3: GoogleFonts.play(),
       headline2: GoogleFonts.play(),
       headline1: GoogleFonts.play(),
-      subtitle2: GoogleFonts.roboto(),
+      subtitle2: GoogleFonts.play(),
 
       // used in text fields
       subtitle1: GoogleFonts.play(),

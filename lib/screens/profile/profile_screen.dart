@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                   ),
                 )
             ),
-            if(widget.isViewUser == 'auhtor') ...[
+            if(widget.isViewUser == 'author') ...[
               Text(
                 "${author.firstName} ${author.lastName}",
                 textAlign: TextAlign.center,

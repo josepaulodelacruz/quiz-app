@@ -15,6 +15,7 @@ const categories_screen = '/categories';
 
 const view_article = '/article-view';
 const read_article = '/article-read';
+const see_all_articles = '/see-all';
 
 const quiz_screen = '/quiz';
 const quiz_completed = '/quiz/completed';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
+import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/widgets/book_widget.dart';
 import 'package:rte_app/models/article.dart';
 
@@ -21,7 +22,9 @@ class TrendingArticleSection extends StatelessWidget {
             style: Theme.of(context).textTheme.headline5!,
           ),
           trailing: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, see_all_articles);
+            },
             child: Text(
                 "See all",
                 style: TextStyle(color: COLOR_PURPLE)
