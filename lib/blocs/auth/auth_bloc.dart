@@ -66,11 +66,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     var response = await authService!.register(event);
     await Future.delayed(Duration(seconds: 1));
     if(response.error == false) {
-      print(response.collections!);
       User user = User.fromMap(response.collections!);
       emit(state.copyWith(status: AuthStatus.success, user: user));
     } else {
-      emit(state.copyWith(status: AuthStatus.failed));
+      emit(state.copyWith(status: AuthStatus.failed, message: response.message));
     }
   }
 

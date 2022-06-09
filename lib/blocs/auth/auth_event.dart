@@ -49,18 +49,24 @@ class AuthRegister extends AuthEvent {
     required this.email,
     required this.password,
     required this.confirmPassword,
+    required this.firstName,
+    required this.lastName,
+    this.middleName = "",
   });
 
   final String email;
   final String password;
   final String confirmPassword;
+  final String firstName;
+  final String lastName;
+  final String middleName;
 
   @override
-  List<Object> get props => [email, password, confirmPassword];
+  List<Object> get props => [email, password, confirmPassword, firstName, lastName, middleName];
 
   @override
   String toString() {
-    return [email, password, confirmPassword].toString();
+    return [email, password, confirmPassword, firstName, lastName, middleName].toString();
   }
 }
 

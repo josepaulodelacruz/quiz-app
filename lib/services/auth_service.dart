@@ -78,8 +78,10 @@ class AuthService extends ApiService {
   Future<AuthResponse> register(AuthRegister text) async {
     try {
       var response = await loginPost('/api/user/register', {
-        'full_name': "no_name",
-        'email': text.email,
+        'first_name': text.firstName,
+        'last_name': text.lastName,
+        'middle_name': text.middleName,
+        'email_address': text.email,
         'password': text.password,
         'password_confirmation': text.confirmPassword,
       });

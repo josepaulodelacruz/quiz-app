@@ -19,7 +19,11 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   late ScrollController _controller;
+  bool hasMiddle = false;
   TextEditingController email = TextEditingController();
+  TextEditingController firstName = TextEditingController();
+  TextEditingController middleName = TextEditingController();
+  TextEditingController lastName = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
   bool isPasswordShow = true;
@@ -92,6 +96,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     // textFieldWidget(label: "Email Address"),
                     // textFieldWidget(label: "Password"),
                     SizedBox(height: 20),
+                    textFieldWidget(label: "First Name", controller: firstName),
+                    ListTile(
+                      onTap: () {
+                        setState(() {
+                          hasMiddle = !hasMiddle;
+                        });
+                      },
+                      visualDensity: VisualDensity(horizontal: -4),
+                      leading: Checkbox(
+                        visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                        value: hasMiddle,
+                        onChanged: (val) {
+                          setState(() {
+                            hasMiddle = !hasMiddle;
+                          });
+                        },
+                      ),
+                      title: Text(
+                        "I do not have middle name",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                    ),
+                    if(!hasMiddle) ...[
+                      textFieldWidget(label: "Middle Name", controller: middleName),
+                    ],
+                    textFieldWidget(label: "Last Name", controller: lastName),
                     textFieldWidget(label: "Email Address", controller: email),
                     textFieldWidget(
                       label: "Password",
@@ -245,6 +275,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           SizedBox(height: 10),
           TextFormField(
             obscureText: obsureText!,
+            textInputAction: TextInputAction.next,
             validator: (text) {
               if(text!.isEmpty) {
                 return "$label is required!";
@@ -271,7 +302,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void _handleSubmit () {
     bool status = _formKey.currentState!.validate();
     if(status) {
-      context.read<AuthBloc>().add(AuthRegister(email: email.text, password: password.text, confirmPassword: confirmPassword.text));
+      context.read<AuthBloc>().add(AuthRegister(
+          email: email.text,
+          password: password.text,
+          confirmPassword: confirmPassword.text,
+          firstName: firstName.text,
+          lastName: lastName.text,
+          middleName: middleName.text,
+      ));
       // Navigator.pushNamed(context, profile_screen);
     }
 
