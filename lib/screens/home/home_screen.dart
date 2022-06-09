@@ -7,6 +7,7 @@ import 'package:rte_app/blocs/tags/tag_bloc.dart';
 import 'package:rte_app/blocs/tags/tag_event.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
+import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/pagination.dart';
@@ -110,7 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: Theme.of(context).textTheme.headline5!,
                               ),
                               trailing: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(context, see_all_articles, arguments: latestArticles);
+                                },
                                 child: Text("See all",
                                     style: TextStyle(color: COLOR_PURPLE)),
                               ),

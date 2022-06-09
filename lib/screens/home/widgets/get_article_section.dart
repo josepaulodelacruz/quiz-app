@@ -4,6 +4,7 @@ import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
 import 'package:rte_app/common/constants.dart';
 import 'package:rte_app/common/size_config.dart';
+import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/widgets/book_widget.dart';
 import 'package:rte_app/models/article.dart';
 import 'package:rte_app/models/pagination.dart';
@@ -25,13 +26,15 @@ class GetArticleSection extends StatelessWidget {
             "Articles",
             style: Theme.of(context).textTheme.headline5!,
           ),
-          // trailing: TextButton(
-          //   onPressed: () {},
-          //   child: Text(
-          //       "See all",
-          //       style: TextStyle(color: COLOR_PURPLE)
-          //   ),
-          // ),
+          trailing: TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, see_all_articles, arguments: articles);
+            },
+            child: Text(
+                "See all",
+                style: TextStyle(color: COLOR_PURPLE)
+            ),
+          ),
         ),
         SizedBox(
             height: 170,

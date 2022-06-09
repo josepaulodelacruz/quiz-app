@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rte_app/blocs/articles/articles_bloc.dart';
 import 'package:rte_app/blocs/articles/articles_event.dart';
@@ -9,6 +10,7 @@ import 'package:rte_app/blocs/search/search_bloc.dart';
 import 'package:rte_app/blocs/search/search_event.dart';
 import 'package:rte_app/blocs/search/search_state.dart';
 import 'package:rte_app/common/constants.dart';
+import 'package:rte_app/common/size_config.dart';
 import 'package:rte_app/common/string_routes.dart';
 import 'package:rte_app/common/widgets/transparent_app_bar_widget.dart';
 import 'package:rte_app/common/widgets/util.dart';
@@ -102,86 +104,139 @@ class _SearchScreenState extends State<SearchScreen> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            title: TextField(
-              onChanged: (text) async  {
-                if(text.isNotEmpty) {
-                  if (_debounce?.isActive ?? false) _debounce?.cancel();
-                  _debounce = Timer(const Duration(milliseconds: 800), () {
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: COLOR_LIGHT_GRAY,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              title: TextField(
+                onChanged: (text) async  {
+                  if(text.isNotEmpty) {
+                    if (_debounce?.isActive ?? false) _debounce?.cancel();
+                    _debounce = Timer(const Duration(milliseconds: 800), () {
+                      context.read<SearchBloc>().add(SearchQueryEvent(query: text));
+                      FocusScope.of(context).unfocus();
+                    });
+                  } else {
                     context.read<SearchBloc>().add(SearchQueryEvent(query: text));
                     FocusScope.of(context).unfocus();
-                  });
+                    _debounce?.cancel();
+                  }
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: "Search",
+                  hintStyle: Theme.of(context).textTheme.bodyText1!.copyWith(color: COLOR_DARK_GRAY),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  prefixIcon: Icon(Icons.search),
+                  suffixIcon: Icon(Icons.mic)
+                ),
+              ),
+            ),
+            body: BlocBuilder<SearchBloc, SearchState>(
+              builder: (context, state) {
+                if(state.status == SearchStatus.waiting) {
+                  return Center(child: Text(
+                    'Enter Article or Name',
+                    style: Theme.of(context).textTheme.headline6,
+                  ));
+                } else if(state.status == SearchStatus.loading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state.status == SearchStatus.success) {
+                  return SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            "Popular Search",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 150,
+                          width: SizeConfig.screenWidth,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              ...state.queries['articles'].map((article) {
+                                return  SearchCardArticleWidget(
+                                  result: article,
+                                  onPressed: () async {
+                                    modalHudLoad(context);
+                                    context.read<ArticlesBloc>().add(GetArticleById(articleId: article['id']));
+                                    FocusScope.of(context).unfocus();
+                                    await Future.delayed(Duration(milliseconds: 1000));
+                                    Navigator.pop(context);
+                                    Navigator.pushNamed(context, view_article);
+                                  },
+                                );
+                              }).toList() ?? [],
+                            ],
+                          ),
+                        ),
+                        // ...state.queries['users'].map((user) {
+                        //   return SearchCardUserWidget(
+                        //     result: user,
+                        //     onPressed: () async {
+                        //       context.read<AuthBloc>().add(AuthViewUser(userId: user['id']));
+                        //       context.read<ArticlesBloc>().add(GetSavedArticles(userId: user['id'], isViewSavedArticles: true));
+                        //       modalHudLoad(context);
+                        //       await Future.delayed(Duration(milliseconds: 1000));
+                        //       Navigator.pop(context);
+                        //       Navigator.pushNamed(context, profile_screen, arguments: 'view');
+                        //     },
+                        //   );
+                        // }).toList() ?? [],
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            "Popular Author",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 100,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              SizedBox(width: 20),
+                              ...state.queries['authors'].map((author) {
+                                return SearchCardAuthorWidget(
+                                  result: author,
+                                  onPressed: () async {
+                                    context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
+                                    modalHudLoad(context);
+                                    await Future.delayed(Duration(milliseconds: 1000));
+                                    Navigator.pop(context);
+                                    Navigator.pushNamed(context, profile_screen, arguments: 'author');
+                                  },
+                                );
+                              }).toList() ?? [],
+                            ],
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  );
                 } else {
-                  context.read<SearchBloc>().add(SearchQueryEvent(query: text));
-                  FocusScope.of(context).unfocus();
-                  _debounce?.cancel();
+                  return Center(child: Text('no search result'));
                 }
               },
-            ),
-          ),
-          body: BlocBuilder<SearchBloc, SearchState>(
-            builder: (context, state) {
-              if(state.status == SearchStatus.waiting) {
-                return Center(child: Text(
-                  'Enter Article or Name',
-                  style: Theme.of(context).textTheme.headline6,
-                ));
-              } else if(state.status == SearchStatus.loading) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state.status == SearchStatus.success) {
-                return ListView(
-                  children: [
-                    ...state.queries['users'].map((user) {
-                      return SearchCardUserWidget(
-                        result: user,
-                        onPressed: () async {
-                          context.read<AuthBloc>().add(AuthViewUser(userId: user['id']));
-                          context.read<ArticlesBloc>().add(GetSavedArticles(userId: user['id'], isViewSavedArticles: true));
-                          modalHudLoad(context);
-                          await Future.delayed(Duration(milliseconds: 1000));
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, profile_screen, arguments: 'view');
-                        },
-                      );
-                    }).toList() ?? [],
-                    ...state.queries['articles'].map((article) {
-                      return  SearchCardArticleWidget(
-                        result: article,
-                        onPressed: () async {
-                          modalHudLoad(context);
-                          context.read<ArticlesBloc>().add(GetArticleById(articleId: article['id']));
-                          FocusScope.of(context).unfocus();
-                          await Future.delayed(Duration(milliseconds: 1000));
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, view_article);
-                        },
-                      );
-                    }).toList() ?? [],
-                    ...state.queries['authors'].map((author) {
-                      return SearchCardAuthorWidget(
-                        result: author,
-                        onPressed: () async {
-                          context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
-                          modalHudLoad(context);
-                          await Future.delayed(Duration(milliseconds: 1000));
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, profile_screen, arguments: 'author');
-                        },
-                      );
-                    }).toList() ?? [],
-                  ],
-                );
-              } else {
-                return Center(child: Text('no search result'));
-              }
-            },
-          )
+            )
+        ),
       ),
     );
   }
