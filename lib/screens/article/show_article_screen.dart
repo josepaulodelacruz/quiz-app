@@ -256,7 +256,10 @@ class ShowArticleScreen extends StatelessWidget {
                                   ),
                                 ),
                                 InkWell(
-                                  onTap: () => _showUserViews(context, article),
+                                  onTap: () {
+                                    if(article.viewedUsers!.isEmpty) return;
+                                    _showUserViews(context, article);
+                                  },
                                   child: SizedBox(
                                     width: SizeConfig.screenWidth! * .4,
                                     height: 50,
