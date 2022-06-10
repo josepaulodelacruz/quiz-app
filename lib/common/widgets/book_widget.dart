@@ -46,13 +46,7 @@ class BookWidget extends StatelessWidget {
         child: Stack(
           children: [
             Center(
-              child: !continueReading ? Hero(
-                tag:  article.id!,
-                child: CachedNetworkImage(
-                  imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
-                  fit: BoxFit.contain,
-                ),
-              ) : CachedNetworkImage(
+              child: CachedNetworkImage(
                 imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
                 fit: BoxFit.contain,
               )

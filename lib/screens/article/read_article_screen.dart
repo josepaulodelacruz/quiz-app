@@ -369,14 +369,11 @@ class _ReadArticleScreenState extends State<ReadArticleScreen> {
   Widget _articleHeroImage(context) {
     return Padding(
       padding: EdgeInsets.all(20),
-      child: Hero(
-        tag: article.id!,
-        child: CachedNetworkImage(
-          imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
-          width: SizeConfig.screenWidth,
-          height: SizeConfig.screenHeight,
-          fit: BoxFit.cover,
-        ),
+      child: CachedNetworkImage(
+        imageUrl: '${dev_endpoint}/articles/articles-default.jpg',
+        width: SizeConfig.screenWidth,
+        height: SizeConfig.screenHeight,
+        fit: BoxFit.cover,
       ),
     );
   }

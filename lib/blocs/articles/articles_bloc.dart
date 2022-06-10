@@ -146,10 +146,8 @@ class ArticlesBloc extends Bloc<ArticleEvent, ArticlesState> {
         nextArticles.add(Article.fromMap(article));
       }).toList();
       articles = [...state.articles, ...nextArticles];
-      print('articles length ${articles.length}');
       emit(state.copyWith(verifiedArticlePagination: paginate, articles: articles));
     }
-
   }
 
   _viewArticle(ArticleView event, Emitter<ArticlesState> emit) async {

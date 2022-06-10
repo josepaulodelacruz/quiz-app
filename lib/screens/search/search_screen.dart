@@ -177,9 +177,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                     modalHudLoad(context);
                                     context.read<ArticlesBloc>().add(GetArticleById(articleId: article['id']));
                                     FocusScope.of(context).unfocus();
-                                    await Future.delayed(Duration(milliseconds: 1000));
                                     Navigator.pop(context);
-                                    Navigator.pushNamed(context, view_article);
+                                    // Navigator.pushNamed(context, view_article);
+                                    // showModalBottomSheet(
+                                    //     context: context,
+                                    //     isScrollControlled: true,
+                                    //     backgroundColor: Colors.transparent,
+                                    //     isDismissible: false,
+                                    //     builder: (_) => DraggableScrollableSheet(
+                                    //       initialChildSize: 1,
+                                    //       builder: (_, scrollController) {
+                                    //         return ShowArticleScreen();
+                                    //       },
+                                    //     )
+                                    // );
                                   },
                                 );
                               }).toList() ?? [],
@@ -216,9 +227,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 return SearchCardAuthorWidget(
                                   result: author,
                                   onPressed: () async {
-                                    context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
                                     modalHudLoad(context);
-                                    await Future.delayed(Duration(milliseconds: 1000));
+                                    context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
                                     Navigator.pop(context);
                                     Navigator.pushNamed(context, profile_screen, arguments: 'author');
                                   },
