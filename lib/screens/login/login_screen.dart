@@ -27,7 +27,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   AppUtil _appUtil = AppUtil();
   // TextEditingController email = TextEditingController(text: 'johndoe@example.org');
-  TextEditingController email = TextEditingController(text: 'friesen.clarabelle@example.org');
+  TextEditingController email = TextEditingController(text: 'meredith10@example.com');
   TextEditingController password = TextEditingController(text: 'password');
   bool isShow = true;
   final _formKey = GlobalKey<FormState>();

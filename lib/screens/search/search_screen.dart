@@ -106,7 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
       },
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: COLOR_LIGHT_GRAY,
+            backgroundColor: COLOR_LIGHT_GRAY,
             appBar: AppBar(
               automaticallyImplyLeading: false,
               elevation: 0,
@@ -126,18 +126,18 @@ class _SearchScreenState extends State<SearchScreen> {
                   }
                 },
                 decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Search",
-                  hintStyle: Theme.of(context).textTheme.bodyText1!.copyWith(color: COLOR_DARK_GRAY),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  prefixIcon: Icon(Icons.search),
-                  suffixIcon: Icon(Icons.mic)
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "Search",
+                    hintStyle: Theme.of(context).textTheme.bodyText1!.copyWith(color: COLOR_DARK_GRAY),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    prefixIcon: Icon(Icons.search),
+                    suffixIcon: Icon(Icons.mic)
                 ),
               ),
             ),
@@ -229,6 +229,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   onPressed: () async {
                                     modalHudLoad(context);
                                     context.read<AuthBloc>().add(AuthViewAuthor(authorId: author['id'], status: ArticleStatus.viewAuthorArticle, bloc: context.read<ArticlesBloc>()));
+                                    await Future.delayed(Duration(seconds: 1));
                                     Navigator.pop(context);
                                     Navigator.pushNamed(context, profile_screen, arguments: 'author');
                                   },

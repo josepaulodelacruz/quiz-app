@@ -63,7 +63,7 @@ class AuthService extends ApiService {
   Future<AuthResponse> login (AuthLogin text) async {
     try {
       var response = await loginPost('/api/user/login', {
-        'email_address': text.email,
+        'email': text.email,
         'password': text.password,
       });
       return AuthResponse.fromMap(response);

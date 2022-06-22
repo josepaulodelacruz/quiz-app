@@ -1,26 +1,31 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:rte_app/common/size_config.dart';
 
 class SearchCardAuthorWidget extends StatelessWidget {
-  Map<String, dynamic>? result;
-  VoidCallback? onPressed;
-  SearchCardAuthorWidget({Key? key, this.result, this.onPressed}) : super(key: key);
+  final Map<String, dynamic>? result;
+  final VoidCallback? onPressed;
+  const SearchCardAuthorWidget({Key? key, this.result, this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: SizeConfig.blockSizeVertical! * 5,
-            child: CircleAvatar(
-              radius: SizeConfig.blockSizeVertical! * 4.5,
-              backgroundImage: NetworkImage(result!['profile_picture']),
+      child: Padding(
+        padding: EdgeInsets.only(right: 15),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: SizeConfig.blockSizeVertical! * 5,
+              child: CircleAvatar(
+                radius: SizeConfig.blockSizeVertical! * 4.5,
+                backgroundImage: NetworkImage(result!['profile_picture']),
+              ),
             ),
-          ),
-          Text(result!['first_name'])
-        ],
+            Text(result!['first_name'])
+          ],
+        ),
       ),
     );
     // return GestureDetector(
