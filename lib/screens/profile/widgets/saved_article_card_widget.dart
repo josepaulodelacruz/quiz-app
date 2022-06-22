@@ -52,7 +52,7 @@ class SavedArticleCardWidget extends StatelessWidget {
                       ),
                 ),
                 subtitle: Text(
-                  article.author!,
+                  article.author.fullName,
                   style: Theme.of(context).textTheme.subtitle1!.copyWith(
                         fontSize: SizeConfig.blockSizeVertical! * 1.5,
                         color: COLOR_DARK_GRAY,

@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:rte_app/models/author.dart';
 
 class Article extends Equatable {
   final int? id;
-  final int? authorId;
-  final String? author;
+  final Author author;
   final String? articleTitle;
   final String? coverPhoto;
   final List<Tag>? tags;
@@ -20,8 +20,7 @@ class Article extends Equatable {
 
   const Article({
     this.id,
-    this.authorId,
-    this.author,
+    this.author = Author.empty,
     this.articleTitle,
     this.coverPhoto,
     this.tags,
@@ -39,7 +38,6 @@ class Article extends Equatable {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'author_id': authorId,
       'author': author,
       'article_title': articleTitle,
       'cover_photo': coverPhoto,
@@ -69,8 +67,7 @@ class Article extends Equatable {
 
     return Article(
       id: map['id'],
-      authorId: map['author_id'],
-      author: map['author'],
+      author: Author.fromMap(map['author']),
       articleTitle: map['article_title'],
       coverPhoto: map['cover_photo'],
       tags: tags,
@@ -88,8 +85,6 @@ class Article extends Equatable {
 
   Article copyWith({
       int? id,
-      int? authorId,
-      String? author,
       String? articleTitle,
       String? coverPhoto,
       String? articleContent,
@@ -104,8 +99,6 @@ class Article extends Equatable {
      }) {
     return Article(
       id: id ?? this.id,
-      authorId: authorId ?? this.authorId,
-      author:  author ?? this.author,
       articleTitle: articleTitle ?? this.articleTitle,
       coverPhoto: coverPhoto ?? this.coverPhoto,
       articleContent: articleContent ?? this.articleContent,
@@ -123,7 +116,6 @@ class Article extends Equatable {
   @override
   List<Object?> get props => [
     id,
-    authorId,
     author,
     articleTitle,
     coverPhoto,
@@ -139,7 +131,7 @@ class Article extends Equatable {
   ];
 
   bool checkIfNull () {
-    return [id, authorId, author, articleTitle, coverPhoto, tags, articleTitle, date, views, likes, saves, isLike, isSaved, category].isEmpty;
+    return [id, author, articleTitle, coverPhoto, tags, articleTitle, date, views, likes, saves, isLike, isSaved, category].isEmpty;
   }
 
 }

@@ -46,7 +46,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                 ),
               ),
               subtitle: Text(
-                article.author!,
+                article.author.fullName,
                 style: Theme.of(context).textTheme.subtitle2!.copyWith(
                   color: COLOR_DARK_GRAY,
                 ),

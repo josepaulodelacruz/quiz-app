@@ -147,10 +147,10 @@ class ShowArticleScreen extends StatelessWidget {
                               subtitle: InkWell(
                                 onTap: () async {
                                   context.read<AuthBloc>().add(AuthViewAuthor(
-                                      authorId: article.authorId!));
+                                      authorId: article.author.id));
                                 },
                                 child: Text(
-                                  "Writer: ${article.author!}",
+                                  "Writer: ${article.author.fullName}",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1!
